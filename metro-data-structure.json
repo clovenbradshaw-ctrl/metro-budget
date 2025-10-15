@@ -1,0 +1,753 @@
+{
+  "departments": [
+    {
+      "name": "Metropolitan Council",
+      "code": "2",
+      "business_units": []
+    },
+    {
+      "name": "Metropolitan Clerk",
+      "code": "3",
+      "business_units": []
+    },
+    {
+      "name": "Mayor's Office",
+      "code": "4",
+      "business_units": [
+        { "code": "91100300", "description": "General Government – Mayor's Office" },
+        { "code": "91110010", "description": "Mayor's Office – Chief Operating Officer Division" },
+        { "code": "91110110", "description": "Mayor's Office – Policy and Innovation Division" },
+        { "code": "91110210", "description": "Mayor's Office – Community Engagement Division" },
+        { "code": "91110410", "description": "Mayor's Office – Performance Management" },
+        { "code": "91110710", "description": "Mayor's Office – Economic and Community Development" },
+        { "code": "91112010", "description": "Mayor's Office – Chief Financial Officer Division" },
+        { "code": "91112210", "description": "Mayor's Office – Communications and Constituent Services" }
+      ]
+    },
+    {
+      "name": "Law Department",
+      "code": "6",
+      "business_units": [
+        { "code": "21101000", "description": "Department of Law (Metro Legal)" },
+        { "code": "21101100", "description": "Department of Law – Legal Services" },
+        { "code": "21101200", "description": "Department of Law – Litigation Division" },
+        { "code": "21101300", "description": "Department of Law – Risk Management Legal Support" },
+        { "code": "21101400", "description": "Department of Law – Claims and Settlements" }
+      ]
+    },
+    {
+      "name": "Planning Commission",
+      "code": "7",
+      "business_units": [
+        { "code": "47102000", "description": "Planning Department – Administration and Policy" }
+      ]
+    },
+    {
+      "name": "Human Resources",
+      "code": "8",
+      "business_units": [
+        { "code": "18101000", "description": "Department of Human Resources" }
+      ]
+    },
+    {
+      "name": "Register of Deeds",
+      "code": "9",
+      "business_units": []
+    },
+    {
+      "name": "Historical Commission",
+      "code": "11",
+      "business_units": [
+        { "code": "49101000", "description": "Metropolitan Historical Commission – Administration" }
+      ]
+    },
+    {
+      "name": "Trustee",
+      "code": "17",
+      "business_units": []
+    },
+    {
+      "name": "Public Defender",
+      "code": "21",
+      "business_units": [
+        { "code": "23102000", "description": "Office of the Public Defender" }
+      ]
+    },
+    {
+      "name": "Juvenile Court Clerk",
+      "code": "22",
+      "business_units": [
+        { "code": "23103000", "description": "Juvenile Court Clerk" }
+      ]
+    },
+    {
+      "name": "Juvenile Court",
+      "code": "26",
+      "business_units": [
+        { "code": "24100100", "description": "Juvenile Court (Judicial Department)" }
+      ]
+    },
+    {
+      "name": "State Trial Courts",
+      "code": "28",
+      "business_units": [
+        { "code": "25100100", "description": "Criminal Court (Judicial Department)" }
+      ]
+    },
+    {
+      "name": "Justice Integration Services",
+      "code": "29",
+      "business_units": []
+    },
+    {
+      "name": "Sheriff",
+      "code": "30",
+      "business_units": [
+        { "code": "26110310", "description": "Sheriff's Office – Administration" },
+        { "code": "26111030", "description": "Sheriff's Office – Detention Operations" },
+        { "code": "26111360", "description": "Sheriff's Office – Inmate Services" },
+        { "code": "26111410", "description": "Sheriff's Office – Transportation Division" },
+        { "code": "26111730", "description": "Sheriff's Office – Training Academy" },
+        { "code": "26111910", "description": "Sheriff's Office – Correctional Development Center – Male" },
+        { "code": "26111930", "description": "Sheriff's Office – Correctional Development Center – Female" },
+        { "code": "26111940", "description": "Sheriff's Office – Offender Reentry Center" },
+        { "code": "26111960", "description": "Sheriff's Office – Davidson County Jail" },
+        { "code": "26112110", "description": "Sheriff's Office – Community Corrections Program" },
+        { "code": "26112210", "description": "Sheriff's Office – Pretrial Release Program" },
+        { "code": "26112310", "description": "Sheriff's Office – Work Release Center" },
+        { "code": "26112325", "description": "Sheriff's Office – Electronic Monitoring Program" },
+        { "code": "26112510", "description": "Sheriff's Office – Inmate Transportation" },
+        { "code": "26112610", "description": "Sheriff's Office – Warrants Division" },
+        { "code": "26112910", "description": "Sheriff's Office – Offender Reentry Program" },
+        { "code": "26113110", "description": "Sheriff's Office – Administrative Services" },
+        { "code": "26114050", "description": "Sheriff's Office – Training and Compliance" }
+      ]
+    },
+    {
+      "name": "Police",
+      "code": "31",
+      "business_units": [
+        { "code": "10104100", "description": "Police Department – Patrol Operations" },
+        { "code": "10104120", "description": "Police Department – Investigations Division" }
+      ]
+    },
+    {
+      "name": "Fire Department",
+      "code": "32",
+      "business_units": [
+        { "code": "1101146", "description": "Fire Department" },
+        { "code": "1101158", "description": "Fire Department" },
+        { "code": "1101159", "description": "Fire Department" },
+        { "code": "1101204", "description": "Fire Department" },
+        { "code": "1101222", "description": "Fire Department" },
+        { "code": "1101412", "description": "Fire Department" },
+        { "code": "1101426", "description": "Fire Department" },
+        { "code": "1101432", "description": "Fire Department" },
+        { "code": "1101433", "description": "Fire Department" },
+        { "code": "1101482", "description": "Fire Department" },
+        { "code": "1101492", "description": "Fire Department" },
+        { "code": "1101499", "description": "Fire Department" },
+        { "code": "1101566", "description": "Fire Department" },
+        { "code": "10170100", "description": "Fire Department – Fire Operations" },
+        { "code": "10170200", "description": "Fire Department – EMS Operations" }
+      ]
+    },
+    {
+      "name": "Codes Administration",
+      "code": "33",
+      "business_units": [
+        { "code": "1101109", "description": "Codes Administration Department" },
+        { "code": "1101114", "description": "Codes Administration Department" },
+        { "code": "1101115", "description": "Codes Administration Department" },
+        { "code": "1101127", "description": "Codes Administration Department" },
+        { "code": "11105000", "description": "Codes Administration – Administration" },
+        { "code": "11105100", "description": "Codes Administration – Construction and Land Use" },
+        { "code": "11105200", "description": "Codes Administration – Building Safety and Permitting" }
+      ]
+    },
+    {
+      "name": "Social Services",
+      "code": "37",
+      "business_units": [
+        { "code": "27110200", "description": "Department of Social Services – Administration" },
+        { "code": "27110210", "description": "Department of Social Services – Homeless Services" },
+        { "code": "27110220", "description": "Department of Social Services – Family Support Programs" },
+        { "code": "27116000", "description": "Department of Social Services – Homeless Impact Division" },
+        { "code": "27117000", "description": "Department of Social Services – Emergency Assistance" },
+        { "code": "27119000", "description": "Department of Social Services – Community Partnerships" }
+      ]
+    },
+    {
+      "name": "Health",
+      "code": "38",
+      "business_units": [
+        { "code": "1101303", "description": "Health Department" },
+        { "code": "1101304", "description": "Health Department" },
+        { "code": "1101333", "description": "Health Department" },
+        { "code": "1101339", "description": "Health Department" },
+        { "code": "1101352", "description": "Health Department" },
+        { "code": "1101382", "description": "Health Department" },
+        { "code": "1101613", "description": "Health Department" },
+        { "code": "1101614", "description": "Health Department" },
+        { "code": "1101650", "description": "Health Department" },
+        { "code": "1101667", "description": "Health Department" },
+        { "code": "1101678", "description": "Health Department" },
+        { "code": "1101691", "description": "Health Department" },
+        { "code": "1101703", "description": "Health Department" },
+        { "code": "1101996", "description": "Health Department" },
+        { "code": "27101000", "description": "Department of Public Health – Administration" },
+        { "code": "27103021", "description": "Department of Public Health – Communicable Disease Program" },
+        { "code": "27105000", "description": "Department of Public Health – Environmental Health" },
+        { "code": "27106011", "description": "Department of Public Health – Family and Community Health" }
+      ]
+    },
+    {
+      "name": "Public Library",
+      "code": "39",
+      "business_units": [
+        { "code": "28101000", "description": "Public Library – Main Library Operations" },
+        { "code": "28106100", "description": "Public Library – Branch Library Operations" }
+      ]
+    },
+    {
+      "name": "Parks",
+      "code": "40",
+      "business_units": [
+        { "code": "7111850", "description": "Parks and Recreation Department" },
+        { "code": "7111860", "description": "Parks and Recreation Department" },
+        { "code": "7112310", "description": "Parks and Recreation Department" },
+        { "code": "7112850", "description": "Parks and Recreation Department" },
+        { "code": "7112860", "description": "Parks and Recreation Department" },
+        { "code": "7112870", "description": "Parks and Recreation Department" },
+        { "code": "7112900", "description": "Parks and Recreation Department" },
+        { "code": "7112910", "description": "Parks and Recreation Department" },
+        { "code": "7112920", "description": "Parks and Recreation Department" },
+        { "code": "7112950", "description": "Parks and Recreation Department" },
+        { "code": "7113050", "description": "Parks and Recreation Department" },
+        { "code": "7113060", "description": "Parks and Recreation Department" }
+      ]
+    },
+    {
+      "name": "Nashville Department of Transportation (NDOT)",
+      "code": "42",
+      "business_units": [
+        { "code": "15102110", "description": "NDOT (Transportation) – Street Maintenance" },
+        { "code": "15102210", "description": "NDOT (Transportation) – Engineering and Permitting" },
+        { "code": "15102610", "description": "NDOT (Transportation) – Operations and Traffic Management" },
+        { "code": "15103110", "description": "NDOT (Transportation) – Infrastructure Management" },
+        { "code": "15108000", "description": "NDOT – Choose How You Move (Transportation Sales Tax Fund)" },
+        { "code": "15116330", "description": "NDOT – Street Lighting and Signal Maintenance" },
+        { "code": "15117150", "description": "NDOT – Traffic Engineering and Operations" },
+        { "code": "15117210", "description": "NDOT (Transportation) – Traffic Engineering and Street Operations" },
+        { "code": "15118110", "description": "NDOT (Transportation) – Transportation Planning and Capital Projects" },
+        { "code": "15151000", "description": "NDOT (Transportation) – Solid Waste Services" },
+        { "code": "15160810", "description": "NDOT (Transportation) – Recycling Operations" },
+        { "code": "15160820", "description": "NDOT (Transportation) – Waste Collection Services" },
+        { "code": "15161050", "description": "NDOT (Transportation) – Waste Reduction and Public Outreach" }
+      ]
+    },
+    {
+      "name": "Human Relations Commission",
+      "code": "44",
+      "business_units": [
+        { "code": "51101000", "description": "Human Relations Commission – Administration" }
+      ]
+    },
+    {
+      "name": "Office of Emergency Management",
+      "code": "49",
+      "business_units": []
+    },
+    {
+      "name": "Office of Family Safety",
+      "code": "51",
+      "business_units": [
+        { "code": "53101000", "description": "Office of Family Safety – Administration" },
+        { "code": "53101100", "description": "Office of Family Safety – Victim Advocacy Services" },
+        { "code": "53105000", "description": "Office of Family Safety – Family Justice Center Operations" }
+      ]
+    },
+    {
+      "name": "Office of Homeless Services",
+      "code": "53",
+      "business_units": []
+    },
+    {
+      "name": "Sports Authority",
+      "code": "64",
+      "business_units": [
+        { "code": "33120010", "description": "Sports Authority – Administration" },
+        { "code": "33120110", "description": "Sports Authority – Nissan Stadium Operations" },
+        { "code": "33120140", "description": "Sports Authority – First Horizon Park Operations" },
+        { "code": "33120210", "description": "Sports Authority – GEODIS Park Operations" },
+        { "code": "33120310", "description": "Sports Authority – Bridgestone Arena Operations" },
+        { "code": "33120410", "description": "Sports Authority – Fort Negley Operations" },
+        { "code": "33120510", "description": "Sports Authority – Capital Maintenance and Improvements" },
+        { "code": "33120610", "description": "Sports Authority – Financial Oversight and Administration" },
+        { "code": "33121000", "description": "Sports Authority – Debt Service and Facility Management" }
+      ]
+    },
+    {
+      "name": "Water and Sewer",
+      "code": "65",
+      "business_units": [
+        { "code": "6110510", "description": "Water Services (Enterprise Fund)" },
+        { "code": "6110610", "description": "Stormwater Division (Enterprise Fund)" },
+        { "code": "16102000", "description": "Department of Water and Sewerage Services (Metro Water Services)" },
+        { "code": "16105000", "description": "Department of Water and Sewerage Services – Stormwater Division" },
+        { "code": "16106000", "description": "Department of Water and Sewerage Services – Administration" },
+        { "code": "40101110", "description": "Department of Water and Sewerage Services – Administration" },
+        { "code": "40101210", "description": "Metro Water Services – Water Supply Operations" },
+        { "code": "40101220", "description": "Metro Water Services – Water Treatment" },
+        { "code": "40101230", "description": "Metro Water Services – Water Distribution" },
+        { "code": "40101240", "description": "Metro Water Services – Customer Service" },
+        { "code": "40101310", "description": "Metro Water Services – Engineering Division" },
+        { "code": "40101410", "description": "Metro Water Services – Environmental Compliance" },
+        { "code": "40103110", "description": "Metro Water Services – Sewer Operations" },
+        { "code": "40104110", "description": "Metro Water Services – Stormwater Maintenance" },
+        { "code": "40104130", "description": "Metro Water Services – Stormwater Engineering" },
+        { "code": "40104140", "description": "Metro Water Services – Stormwater Permitting" },
+        { "code": "40104150", "description": "Metro Water Services – Stormwater Education and Outreach" },
+        { "code": "40104310", "description": "Metro Water Services – Laboratory Services" },
+        { "code": "40104410", "description": "Metro Water Services – Pretreatment Program" },
+        { "code": "40104415", "description": "Metro Water Services – Industrial Waste Inspection" },
+        { "code": "40105110", "description": "Metro Water Services – Finance and Administration" },
+        { "code": "40106110", "description": "Metro Water Services – Information Technology" },
+        { "code": "40106130", "description": "Metro Water Services – Safety and Risk Management" },
+        { "code": "40106210", "description": "Metro Water Services – Asset Management" },
+        { "code": "40106230", "description": "Metro Water Services – Construction Management" },
+        { "code": "40106240", "description": "Metro Water Services – Capital Planning" },
+        { "code": "40107210", "description": "Metro Water Services – Human Resources" },
+        { "code": "40107310", "description": "Metro Water Services – Procurement and Contracts" },
+        { "code": "40107410", "description": "Metro Water Services – Fleet and Facilities" },
+        { "code": "40107610", "description": "Metro Water Services – Security and Emergency Preparedness" },
+        { "code": "40107710", "description": "Metro Water Services – Training and Development" },
+        { "code": "40107730", "description": "Metro Water Services – Regulatory Affairs" },
+        { "code": "40150110", "description": "Metro Water Services – Operations Administration" },
+        { "code": "40150120", "description": "Metro Water Services – Treatment Operations Support" },
+        { "code": "40150210", "description": "Metro Water Services – Pumping Operations" },
+        { "code": "40150220", "description": "Metro Water Services – Instrumentation and Control" },
+        { "code": "40150310", "description": "Metro Water Services – Electrical Maintenance" },
+        { "code": "40150320", "description": "Metro Water Services – Mechanical Maintenance" },
+        { "code": "40150410", "description": "Metro Water Services – Biosolids Management" },
+        { "code": "40150420", "description": "Metro Water Services – Laboratory Operations" },
+        { "code": "40150510", "description": "Metro Water Services – Watershed Management" },
+        { "code": "40150520", "description": "Metro Water Services – Floodplain Management" },
+        { "code": "40150610", "description": "Metro Water Services – Engineering Support" },
+        { "code": "40150620", "description": "Metro Water Services – Design Review" },
+        { "code": "40150710", "description": "Metro Water Services – Infrastructure Inspection" },
+        { "code": "40150720", "description": "Metro Water Services – GIS and Mapping" },
+        { "code": "40150810", "description": "Metro Water Services – Utility Locating" },
+        { "code": "40150820", "description": "Metro Water Services – Meter Maintenance" },
+        { "code": "40150910", "description": "Metro Water Services – Customer Billing" },
+        { "code": "40150920", "description": "Metro Water Services – Collections and Payments" },
+        { "code": "40151010", "description": "Metro Water Services – Legal and Regulatory Support" },
+        { "code": "40151020", "description": "Metro Water Services – Strategic Planning" },
+        { "code": "40151210", "description": "Metro Water Services – Communications and Public Outreach" }
+      ]
+    },
+    {
+      "name": "Music City Center",
+      "code": "71",
+      "business_units": [
+        { "code": "37121000", "description": "Convention Center Authority – Administration" },
+        { "code": "37121200", "description": "Convention Center Authority – Facility Management" },
+        { "code": "37122300", "description": "Convention Center Authority – Food and Beverage Operations" },
+        { "code": "37122400", "description": "Convention Center Authority – Event Operations" },
+        { "code": "37122500", "description": "Convention Center Authority – Sales and Marketing" },
+        { "code": "37123000", "description": "Convention Center Authority – Parking and Ancillary Services" },
+        { "code": "37125200", "description": "Convention Center Authority – Capital and Debt Service" },
+        { "code": "6110310", "description": "Convention Center Authority (Enterprise Fund)" }
+      ]
+    },
+    {
+      "name": "Waste Services",
+      "code": "72",
+      "business_units": []
+    },
+    {
+      "name": "Metro Action Commission",
+      "code": "75",
+      "business_units": []
+    },
+    {
+      "name": "Municipal Auditorium",
+      "code": "61",
+      "business_units": [
+        { "code": "6110110", "description": "Municipal Auditorium (Enterprise Fund)" },
+        { "code": "42142110", "description": "Municipal Auditorium – Administration" },
+        { "code": "42142180", "description": "Municipal Auditorium – Event Operations" },
+        { "code": "42142210", "description": "Municipal Auditorium – Facility Maintenance" }
+      ]
+    },
+    {
+      "name": "Metropolitan Nashville Public Schools (MNPS)",
+      "code": "80",
+      "business_units": [
+        { "code": "35101000", "description": "Nashville Public Education Foundation / MNPS Support Fund" },
+        { "code": "35102100", "description": "MNPS – Operations (Schools General Fund)" },
+        { "code": "35102400", "description": "MNPS – Instructional Support Services" },
+        { "code": "35102500", "description": "MNPS – Student Transportation" }
+      ]
+    },
+    {
+      "name": "Internal Audit",
+      "code": "48",
+      "business_units": []
+    }
+  ],
+  "other_entities": {
+    "funds": [
+      { "code": "2101000", "description": "Urban Services District (USD) General Fund" },
+      { "code": "3101000", "description": "GSD Debt Service Fund" },
+      { "code": "3103000", "description": "GSD School Debt Service Fund" },
+      { "code": "9101000", "description": "Risk Management / Employee Benefit Board (Internal Service Fund)" }
+    ],
+    "authorities_and_boards": [
+      {
+        "name": "Hospital Authority",
+        "code": "4101010",
+        "business_units": [
+          { "code": "4101010", "description": "Hospital Authority" },
+          { "code": "38150271", "description": "Hospital Authority – Bordeaux Long-Term Care" },
+          { "code": "38150273", "description": "Hospital Authority – Knowles Home Assisted Living" },
+          { "code": "38151001", "description": "Hospital Authority – Administration" },
+          { "code": "38151032", "description": "Hospital Authority – Nursing Services" },
+          { "code": "38151036", "description": "Hospital Authority – Emergency Department" },
+          { "code": "38151051", "description": "Hospital Authority – Radiology" },
+          { "code": "38151072", "description": "Hospital Authority – Laboratory Services" },
+          { "code": "38151091", "description": "Hospital Authority – Pharmacy" },
+          { "code": "38151121", "description": "Hospital Authority – Dietary Services" },
+          { "code": "38151131", "description": "Hospital Authority – Housekeeping" },
+          { "code": "38151141", "description": "Hospital Authority – Maintenance" },
+          { "code": "38151151", "description": "Hospital Authority – Social Services" },
+          { "code": "38151171", "description": "Hospital Authority – Admissions" },
+          { "code": "38151173", "description": "Hospital Authority – Medical Records" },
+          { "code": "38151181", "description": "Hospital Authority – Information Technology" },
+          { "code": "38151191", "description": "Hospital Authority – Finance" },
+          { "code": "38151203", "description": "Hospital Authority – Human Resources" },
+          { "code": "38151222", "description": "Hospital Authority – Security" },
+          { "code": "38151224", "description": "Hospital Authority – Pastoral Care" },
+          { "code": "38151226", "description": "Hospital Authority – Compliance and Risk Management" },
+          { "code": "38151227", "description": "Hospital Authority – Quality Management" },
+          { "code": "38151233", "description": "Hospital Authority – Patient Care Services" },
+          { "code": "38151241", "description": "Hospital Authority – Facilities Engineering" },
+          { "code": "38160110", "description": "Hospital Authority – General Hospital Administration" },
+          { "code": "38160210", "description": "Hospital Authority – Outpatient Clinics" },
+          { "code": "38160310", "description": "Hospital Authority – Inpatient Care" },
+          { "code": "38160410", "description": "Hospital Authority – Rehabilitation Services" },
+          { "code": "38160610", "description": "Hospital Authority – Ancillary Services" },
+          { "code": "38160810", "description": "Hospital Authority – Finance and Accounting" },
+          { "code": "38161000", "description": "Hospital Authority – Human Resources" },
+          { "code": "38161010", "description": "Hospital Authority – Information Technology" },
+          { "code": "38161020", "description": "Hospital Authority – Compliance and Risk Management" }
+        ]
+      },
+      {
+        "name": "Metropolitan Housing Trust Fund Commission",
+        "code": "5100410",
+        "business_units": [
+          { "code": "5100410", "description": "Metropolitan Housing Trust Fund Commission" }
+        ]
+      },
+      {
+        "name": "Farmers Market",
+        "business_units": [
+          { "code": "6110010", "description": "Farmers Market (Enterprise Fund)" },
+          { "code": "42141110", "description": "Farmers' Market – Administration" },
+          { "code": "42141210", "description": "Farmers' Market – Vendor Operations" },
+          { "code": "42141310", "description": "Farmers' Market – Facility Maintenance" },
+          { "code": "42141410", "description": "Farmers' Market – Event Management" },
+          { "code": "42141420", "description": "Farmers' Market – Marketing and Promotion" },
+          { "code": "42141510", "description": "Farmers' Market – Food Hall Operations" },
+          { "code": "42141610", "description": "Farmers' Market – Leasing and Permits" },
+          { "code": "42141710", "description": "Farmers' Market – Security Services" }
+        ]
+      },
+      {
+        "name": "Board of Fair Commissioners",
+        "business_units": [
+          { "code": "6110210", "description": "Board of Fair Commissioners" },
+          { "code": "42142710", "description": "Board of Fair Commissioners – Administration" },
+          { "code": "42142832", "description": "Board of Fair Commissioners – Fairgrounds Speedway" },
+          { "code": "42143700", "description": "Board of Fair Commissioners – Event Management" },
+          { "code": "42143710", "description": "Board of Fair Commissioners – Facility Maintenance" },
+          { "code": "42143720", "description": "Board of Fair Commissioners – Leasing and Operations" },
+          { "code": "42143740", "description": "Board of Fair Commissioners – Capital Improvements" },
+          { "code": "42144710", "description": "Board of Fair Commissioners – Expo Center Operations" },
+          { "code": "42145210", "description": "Board of Fair Commissioners – Nashville Fair Administration" },
+          { "code": "42145230", "description": "Board of Fair Commissioners – Fair Programming" },
+          { "code": "42146010", "description": "Board of Fair Commissioners – Parking and Revenue Management" },
+          { "code": "42146020", "description": "Board of Fair Commissioners – Security and Safety" },
+          { "code": "42161000", "description": "Board of Fair Commissioners – Animal Control Facilities" },
+          { "code": "42161110", "description": "Board of Fair Commissioners – Speedway Maintenance" },
+          { "code": "42161130", "description": "Board of Fair Commissioners – Fairgrounds Master Plan Implementation" }
+        ]
+      },
+      {
+        "name": "Metropolitan Transit Authority (WeGo Public Transit)",
+        "business_units": [
+          { "code": "8126100", "description": "Metropolitan Transit Authority (WeGo Public Transit)" },
+          { "code": "8126400", "description": "WeGo Public Transit (Metropolitan Transit Authority)" },
+          { "code": "8126500", "description": "WeGo Public Transit (Metropolitan Transit Authority)" },
+          { "code": "8126600", "description": "WeGo Public Transit (Metropolitan Transit Authority)" },
+          { "code": "8126700", "description": "WeGo Public Transit (Metropolitan Transit Authority)" },
+          { "code": "8126800", "description": "WeGo Public Transit (Metropolitan Transit Authority)" }
+        ]
+      },
+      {
+        "name": "Department of Emergency Communications",
+        "business_units": [
+          { "code": "10103210", "description": "Department of Emergency Communications – Administration" },
+          { "code": "10103220", "description": "Department of Emergency Communications – Call Taking" },
+          { "code": "10103230", "description": "Department of Emergency Communications – Dispatch Operations" },
+          { "code": "10103260", "description": "Department of Emergency Communications – Training and Support" },
+          { "code": "10103270", "description": "Department of Emergency Communications – Technical Operations" },
+          { "code": "10103280", "description": "Department of Emergency Communications – Facilities and Logistics" }
+        ]
+      },
+      {
+        "name": "Department of General Services",
+        "business_units": [
+          { "code": "17101000", "description": "Department of General Services" }
+        ]
+      },
+      {
+        "name": "Department of Finance",
+        "business_units": [
+          { "code": "19101000", "description": "Department of Finance" }
+        ]
+      },
+      {
+        "name": "Office of the District Attorney General",
+        "business_units": [
+          { "code": "22101000", "description": "Office of the District Attorney General" },
+          { "code": "23104000", "description": "Criminal Court Clerk" }
+        ]
+      },
+      {
+        "name": "Information Technology Services",
+        "business_units": [
+          { "code": "29160710", "description": "Information Technology Services – Administration" }
+        ]
+      },
+      {
+        "name": "Metropolitan Development and Housing Agency (MDHA)",
+        "business_units": [
+          { "code": "30122130", "description": "Metropolitan Development and Housing Agency (MDHA) – Planning and Community Development" },
+          { "code": "30122230", "description": "MDHA – Redevelopment Operations" },
+          { "code": "30122310", "description": "MDHA – Economic and Community Development" },
+          { "code": "30122810", "description": "MDHA – Housing Development and Support" },
+          { "code": "30122910", "description": "MDHA – Affordable Housing Management" },
+          { "code": "30122930", "description": "MDHA – Community Partnerships" },
+          { "code": "30123210", "description": "MDHA – Rental Assistance Program" },
+          { "code": "30124030", "description": "MDHA – Compliance and Oversight" },
+          { "code": "30124110", "description": "MDHA – Finance and Administration" },
+          { "code": "30124410", "description": "MDHA – Housing Choice Voucher Program" },
+          { "code": "30124510", "description": "MDHA – Property Management Services" },
+          { "code": "30124610", "description": "MDHA – Resident Services and Support" },
+          { "code": "30124710", "description": "MDHA – Neighborhood Revitalization" },
+          { "code": "30124810", "description": "MDHA – Affordable Housing Initiatives" },
+          { "code": "30124910", "description": "MDHA – Capital Projects Management" },
+          { "code": "30124930", "description": "MDHA – Real Estate and Asset Management" },
+          { "code": "30125110", "description": "MDHA – Community Development Block Grant Administration" },
+          { "code": "30125210", "description": "MDHA – HOME Investment Partnerships Program" },
+          { "code": "30125310", "description": "MDHA – Economic Development Programs" },
+          { "code": "30125330", "description": "MDHA – Housing Trust Fund Program" },
+          { "code": "30125340", "description": "Metropolitan Development and Housing Agency (MDHA) – Community Development Block Grant Support" },
+          { "code": "30126300", "description": "MDHA – Capital Planning and Construction" },
+          { "code": "30126310", "description": "MDHA – Development and Redevelopment" },
+          { "code": "30126320", "description": "MDHA – Affordable Housing Construction" },
+          { "code": "30127100", "description": "MDHA – Housing Rehabilitation Program" },
+          { "code": "30127200", "description": "MDHA – Neighborhood Stabilization Program" },
+          { "code": "30127300", "description": "MDHA – HOME Investment Program" },
+          { "code": "30127400", "description": "MDHA – Community Development Operations" },
+          { "code": "30127500", "description": "MDHA – Federal Grants and Partnerships" },
+          { "code": "30127600", "description": "MDHA – Housing Program Management" }
+        ]
+      },
+      {
+        "name": "Nashville Electric Service (NES)",
+        "business_units": [
+          { "code": "31121001", "description": "Nashville Electric Service (NES) – Administration" },
+          { "code": "31121051", "description": "NES – Transmission Operations" },
+          { "code": "31121053", "description": "NES – Distribution Operations" },
+          { "code": "31121101", "description": "NES – Customer Services" },
+          { "code": "31121103", "description": "NES – Billing and Metering" },
+          { "code": "31121151", "description": "NES – Energy Management and Planning" },
+          { "code": "31121201", "description": "NES – Engineering and Construction" },
+          { "code": "31121251", "description": "NES – Substation Operations" },
+          { "code": "31121252", "description": "NES – Maintenance Operations" },
+          { "code": "31121260", "description": "NES – Power Supply Coordination" },
+          { "code": "31121301", "description": "NES – Field Services" },
+          { "code": "31121355", "description": "NES – Network Operations" },
+          { "code": "31121419", "description": "NES – IT and Systems Operations" },
+          { "code": "31121451", "description": "NES – Procurement and Materials Management" },
+          { "code": "31121453", "description": "NES – Fleet Operations" },
+          { "code": "31121454", "description": "NES – Facilities Maintenance" },
+          { "code": "31121455", "description": "NES – Environmental Compliance" },
+          { "code": "31121456", "description": "NES – Training and Workforce Development" },
+          { "code": "31121457", "description": "NES – Finance and Accounting" },
+          { "code": "31121459", "description": "NES – Legal and Administrative Services" },
+          { "code": "31121460", "description": "Nashville Electric Service (NES) – Human Resources" },
+          { "code": "31121461", "description": "NES – Labor Relations" },
+          { "code": "31121462", "description": "NES – Employee Benefits" },
+          { "code": "31121463", "description": "NES – Payroll Administration" },
+          { "code": "31121464", "description": "NES – Training and Development" },
+          { "code": "31121501", "description": "NES – Legal Department" },
+          { "code": "31121601", "description": "NES – Government and Regulatory Affairs" },
+          { "code": "31121701", "description": "NES – Customer Care Center" },
+          { "code": "31121703", "description": "NES – Customer Field Services" },
+          { "code": "31121751", "description": "NES – Meter Services" },
+          { "code": "31121760", "description": "NES – Billing and Revenue Assurance" },
+          { "code": "31121801", "description": "NES – Engineering and Technical Operations" },
+          { "code": "31121810", "description": "NES – Power Distribution Planning" },
+          { "code": "31121850", "description": "NES – Substation and Transmission Maintenance" },
+          { "code": "31121901", "description": "NES – Operations Support" },
+          { "code": "31121951", "description": "NES – Fleet Management" },
+          { "code": "31121960", "description": "NES – Safety and Environmental Compliance" },
+          { "code": "31121961", "description": "NES – Risk Management" },
+          { "code": "31122001", "description": "NES – IT Infrastructure" },
+          { "code": "31122051", "description": "NES – Application Development" },
+          { "code": "31122151", "description": "NES – Cybersecurity and Data Governance" },
+          { "code": "31122153", "description": "NES – SCADA and Network Operations" },
+          { "code": "31122201", "description": "NES – Accounting and Financial Reporting" },
+          { "code": "31122313", "description": "NES – Treasury and Debt Management" },
+          { "code": "31122401", "description": "NES – Procurement and Materials Management" },
+          { "code": "31122403", "description": "NES – Warehouse Operations" },
+          { "code": "31122405", "description": "NES – Inventory Control" },
+          { "code": "31122407", "description": "NES – Supply Chain Management" },
+          { "code": "31122409", "description": "NES – Contract Administration" },
+          { "code": "31122411", "description": "NES – Purchasing Operations" },
+          { "code": "31122413", "description": "NES – Facilities Operations" },
+          { "code": "31122414", "description": "NES – Facilities Maintenance" },
+          { "code": "31122415", "description": "NES – Security Operations" },
+          { "code": "31122416", "description": "NES – Mail and Courier Services" },
+          { "code": "31122600", "description": "NES – Corporate Communications" },
+          { "code": "31122700", "description": "NES – Community Engagement and Outreach" },
+          { "code": "31123001", "description": "NES – Strategic Planning" },
+          { "code": "31123051", "description": "NES – Enterprise Performance Management" },
+          { "code": "31123201", "description": "NES – Executive Administration" },
+          { "code": "31160110", "description": "Nashville Electric Service – Energy Delivery Division" },
+          { "code": "31160310", "description": "NES – Transmission Engineering" },
+          { "code": "31160320", "description": "NES – Distribution Engineering" },
+          { "code": "31160330", "description": "NES – Substation Engineering" },
+          { "code": "31160410", "description": "NES – Construction and Maintenance" },
+          { "code": "31160420", "description": "NES – Field Services" },
+          { "code": "31160510", "description": "NES – Line Operations" },
+          { "code": "31160610", "description": "NES – Underground Systems" },
+          { "code": "31160710", "description": "NES – System Protection and Control" },
+          { "code": "31160810", "description": "NES – Reliability Engineering" },
+          { "code": "31161000", "description": "NES – Operations Administration" }
+        ]
+      },
+      {
+        "name": "Nashville International Airport Authority",
+        "business_units": [
+          { "code": "32114110", "description": "Nashville International Airport Authority – Administration" },
+          { "code": "32114210", "description": "Airport Authority – Finance and Accounting" },
+          { "code": "32114510", "description": "Airport Authority – Operations and Maintenance" },
+          { "code": "32114710", "description": "Airport Authority – Safety and Security" },
+          { "code": "32115210", "description": "Airport Authority – Engineering and Construction" },
+          { "code": "32115410", "description": "Airport Authority – Commercial Development" },
+          { "code": "32115510", "description": "Airport Authority – Concessions and Leasing" },
+          { "code": "32116310", "description": "Airport Authority – Marketing and Communications" },
+          { "code": "32116330", "description": "Airport Authority – Customer Experience" },
+          { "code": "32160110", "description": "Airport Authority – Airfield Operations" },
+          { "code": "32160210", "description": "Airport Authority – Facilities Management" },
+          { "code": "32160710", "description": "Airport Authority – Environmental and Sustainability Division" },
+          { "code": "32160810", "description": "Airport Authority – Environmental and Sustainability Division" }
+        ]
+      },
+      {
+        "name": "Industrial Development Board",
+        "business_units": [
+          { "code": "34101000", "description": "Industrial Development Board – Administration" },
+          { "code": "34102000", "description": "Industrial Development Board – Project Oversight" },
+          { "code": "34102100", "description": "Industrial Development Board – Bond Management" },
+          { "code": "34102300", "description": "Industrial Development Board – Economic Development Support" }
+        ]
+      },
+      {
+        "name": "Emergency Communications District",
+        "business_units": [
+          { "code": "39101010", "description": "Emergency Communications District – Administration" },
+          { "code": "39101020", "description": "Emergency Communications District – 911 Operations" },
+          { "code": "39101030", "description": "Emergency Communications District – Technology and Infrastructure" },
+          { "code": "39101050", "description": "Emergency Communications District – Training and Quality Assurance" },
+          { "code": "39101060", "description": "Emergency Communications District – Radio Systems" },
+          { "code": "39101070", "description": "Emergency Communications District – GIS and Addressing" },
+          { "code": "39101080", "description": "Emergency Communications District – Dispatch Services" },
+          { "code": "39101090", "description": "Emergency Communications District – Emergency Management Integration" },
+          { "code": "39102000", "description": "Emergency Communications District – Capital Projects" },
+          { "code": "39102100", "description": "Emergency Communications District – Facilities" },
+          { "code": "39102500", "description": "Emergency Communications District – Equipment Replacement Fund" },
+          { "code": "39103203", "description": "Emergency Communications District – Operations Support" },
+          { "code": "39103206", "description": "Emergency Communications District – 911 Call Center Operations" },
+          { "code": "39103207", "description": "Emergency Communications District – CAD Systems" },
+          { "code": "39103211", "description": "Emergency Communications District – Network Administration" },
+          { "code": "39103212", "description": "Emergency Communications District – Server Administration" },
+          { "code": "39103213", "description": "Emergency Communications District – Data Center Operations" },
+          { "code": "39103230", "description": "Emergency Communications District – Security and Compliance" },
+          { "code": "39103240", "description": "Emergency Communications District – Facilities Maintenance" },
+          { "code": "39103303", "description": "Emergency Communications District – Administration and Finance" },
+          { "code": "39103304", "description": "Emergency Communications District – Grants and Partnerships" },
+          { "code": "39103305", "description": "Emergency Communications District – Procurement" },
+          { "code": "39103310", "description": "Emergency Communications District – Training and Development" },
+          { "code": "39103315", "description": "Emergency Communications District – Scheduling and Workforce" },
+          { "code": "39103320", "description": "Emergency Communications District – Quality Control" },
+          { "code": "39103325", "description": "Emergency Communications District – Employee Relations" },
+          { "code": "39103330", "description": "Emergency Communications District – IT Support" },
+          { "code": "39103335", "description": "Emergency Communications District – Systems Development" },
+          { "code": "39103340", "description": "Emergency Communications District – GIS and Mapping" },
+          { "code": "39103345", "description": "Emergency Communications District – Public Education" },
+          { "code": "39103350", "description": "Emergency Communications District – Communications Systems" },
+          { "code": "39103355", "description": "Emergency Communications District – Radio Network" },
+          { "code": "39103360", "description": "Emergency Communications District – Dispatch Technology" },
+          { "code": "39103365", "description": "Emergency Communications District – Emergency Preparedness" },
+          { "code": "39103370", "description": "Emergency Communications District – Continuity of Operations" },
+          { "code": "39103375", "description": "Emergency Communications District – Policy and Compliance" },
+          { "code": "39103380", "description": "Emergency Communications District – Strategic Planning" },
+          { "code": "39103385", "description": "Emergency Communications District – External Affairs" },
+          { "code": "39103390", "description": "Emergency Communications District – Records Management" },
+          { "code": "39103401", "description": "Emergency Communications District – Capital Improvements" },
+          { "code": "39104061", "description": "Emergency Communications District – Dispatch Expansion Project" },
+          { "code": "39104081", "description": "Emergency Communications District – Systems Modernization Project" },
+          { "code": "39104083", "description": "Emergency Communications District – Dispatch Technology Upgrade" },
+          { "code": "39104085", "description": "Emergency Communications District – CAD Replacement Project" },
+          { "code": "39104121", "description": "Emergency Communications District – Radio Infrastructure Renewal" },
+          { "code": "39104151", "description": "Emergency Communications District – Cybersecurity and Network Hardening" }
+        ]
+      },
+      {
+        "name": "District Energy System",
+        "business_units": [
+          { "code": "41106000", "description": "District Energy System – Administration" },
+          { "code": "41106100", "description": "District Energy System – Operations and Maintenance" },
+          { "code": "41106200", "description": "District Energy System – Engineering and Projects" },
+          { "code": "41106250", "description": "District Energy System – Capital Improvements" }
+        ]
+      },
+      {
+        "name": "Metropolitan Beer Permit Board",
+        "business_units": [
+          { "code": "44100310", "description": "Metropolitan Beer Permit Board – Administration" }
+        ]
+      },
+      {
+        "name": "Arts Commission",
+        "business_units": [
+          { "code": "48109110", "description": "Arts Commission – Administration" },
+          { "code": "48109210", "description": "Arts Commission – Community Arts Programs" },
+          { "code": "48109310", "description": "Arts Commission – Public Art Program" }
+        ]
+      },
+      {
+        "name": "Community Oversight Board",
+        "business_units": [
+          { "code": "54101000", "description": "Community Oversight Board – Administration" }
+        ]
+      }
+    ]
+  }
+}
