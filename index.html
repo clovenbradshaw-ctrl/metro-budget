@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Viewer</title>
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #4a5568;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .config {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .config input {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+        }
+        .config button {
+            padding: 8px 16px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .config button:hover {
+            background: #38a169;
+        }
+        .tabs {
+            display: flex;
+            background: #edf2f7;
+            border-bottom: 2px solid #cbd5e0;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: #e2e8f0;
+        }
+        .tab.active {
+            background: white;
+            color: #2d3748;
+            border-bottom: 2px solid #4299e1;
+            margin-bottom: -2px;
+        }
+        .tab-content {
+            padding: 20px 30px;
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .download-btn {
+            padding: 8px 16px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .download-btn:hover {
+            background: #3182ce;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #718096;
+        }
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #4299e1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            padding: 20px;
+            background: #fed7d7;
+            color: #c53030;
+            border-radius: 4px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Data Viewer</h1>
+            <div class="config">
+                <input type="text" id="repoInput" placeholder="username/repo" value="">
+                <button onclick="loadData()">Load Data</button>
+            </div>
+        </div>
+        <div id="tabs" class="tabs"></div>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        let tables = {};
+        let currentRepo = '';
+
+        // Get repo from URL or use default
+        const urlParams = new URLSearchParams(window.location.search);
+        const repoParam = urlParams.get('repo');
+        if (repoParam) {
+            document.getElementById('repoInput').value = repoParam;
+            loadData();
+        }
+
+        async function loadData() {
+            const repoInput = document.getElementById('repoInput').value.trim();
+            if (!repoInput) {
+                alert('Please enter a repository (e.g., username/repo)');
+                return;
+            }
+
+            currentRepo = repoInput;
+            const contentDiv = document.getElementById('content');
+            const tabsDiv = document.getElementById('tabs');
+            
+            contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div><div>Loading data...</div></div>';
+            tabsDiv.innerHTML = '';
+            tables = {};
+
+            try {
+                // Get list of folders in data directory
+                const foldersResponse = await fetch(`https://api.github.com/repos/${currentRepo}/contents/data`);
+                if (!foldersResponse.ok) throw new Error('Failed to fetch data folder');
+                
+                const items = await foldersResponse.json();
+                const folders = items.filter(item => item.type === 'dir');
+
+                if (folders.length === 0) {
+                    throw new Error('No folders found in data directory');
+                }
+
+                // Load data from each folder
+                for (const folder of folders) {
+                    await loadTableFromFolder(folder.name);
+                }
+
+                // Create tabs and display first table
+                createTabs();
+                
+            } catch (error) {
+                contentDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function loadTableFromFolder(folderName) {
+            // Get all CSV files in the folder
+            const filesResponse = await fetch(`https://api.github.com/repos/${currentRepo}/contents/data/${folderName}`);
+            const files = await filesResponse.json();
+            const csvFiles = files.filter(file => file.name.endsWith('.csv'));
+
+            if (csvFiles.length === 0) return;
+
+            // Load and combine all CSVs
+            let allData = [];
+            for (const file of csvFiles) {
+                const csvResponse = await fetch(file.download_url);
+                const csvText = await csvResponse.text();
+                
+                const parsed = Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: true
+                });
+
+                allData = allData.concat(parsed.data);
+            }
+
+            tables[folderName] = allData;
+        }
+
+        function createTabs() {
+            const tabsDiv = document.getElementById('tabs');
+            const contentDiv = document.getElementById('content');
+            
+            tabsDiv.innerHTML = '';
+            contentDiv.innerHTML = '';
+
+            const tableNames = Object.keys(tables);
+            
+            tableNames.forEach((name, index) => {
+                // Create tab
+                const tab = document.createElement('button');
+                tab.className = 'tab' + (index === 0 ? ' active' : '');
+                tab.textContent = name;
+                tab.onclick = () => switchTab(name);
+                tabsDiv.appendChild(tab);
+
+                // Create tab content
+                const tabContent = document.createElement('div');
+                tabContent.className = 'tab-content' + (index === 0 ? ' active' : '');
+                tabContent.id = `tab-${name}`;
+                
+                tabContent.innerHTML = `
+                    <div class="table-header">
+                        <div class="table-title">${name}</div>
+                        <button class="download-btn" onclick="downloadTable('${name}')">⬇ Download CSV</button>
+                    </div>
+                    <div id="table-${name}"></div>
+                `;
+                
+                contentDiv.appendChild(tabContent);
+
+                // Create Tabulator table
+                new Tabulator(`#table-${name}`, {
+                    data: tables[name],
+                    autoColumns: true,
+                    layout: "fitDataStretch",
+                    pagination: true,
+                    paginationSize: 50,
+                    paginationSizeSelector: [25, 50, 100, 200],
+                    movableColumns: true,
+                    resizableColumns: true,
+                    responsiveLayout: "collapse"
+                });
+            });
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `tab-${tabName}`) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        function downloadTable(tableName) {
+            const data = tables[tableName];
+            const csv = Papa.unparse(data);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${tableName}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
