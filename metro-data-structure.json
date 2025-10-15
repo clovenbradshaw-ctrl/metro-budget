@@ -270,7 +270,25 @@
     {
       "name": "Office of Homeless Services",
       "code": "53",
-      "business_units": []
+      "business_units": [
+        { "code": "53313000", "description": "53101000" },
+        { "code": "53104000", "description": "53104000" },
+        { "code": "53105000", "description": "53105000" },
+        { "code": "53106000", "description": "53106000" },
+        { "code": "53107000", "description": "53107000" },
+        { "code": "53312000", "description": "OHS MHC MDHA CDBG" },
+        { "code": "53312300", "description": "53312300" },
+        { "code": "53312400", "description": "53312400" },
+        { "code": "53312500", "description": "OHS HMIS Dev Support" },
+        { "code": "53312710", "description": "53312710" },
+        { "code": "53313000", "description": "53101100" },
+        { "code": "53701500", "description": "OHS How's Nashville" },
+        { "code": "53902024", "description": "OHS ARP Housing First Supportive Servcs" },
+        { "code": "53902025", "description": "OHS ARP Interim Gap Housing" },
+        { "code": "53902026", "description": "OHS ARP Low Barrier Housing | Landlord Engagement" },
+        { "code": "53902027", "description": "OHS American Rescue Plan I" },
+        { "code": "53902028", "description": "53902028" }
+      ]
     },
     {
       "name": "Sports Authority",
@@ -394,13 +412,28 @@
       "name": "Internal Audit",
       "code": "48",
       "business_units": []
+    },
+    {
+      "name": "Department of Emergency Communications",
+      "code": "91",
+      "business_units": [
+        { "code": "10103210", "description": "Department of Emergency Communications – Administration" },
+        { "code": "10103220", "description": "Department of Emergency Communications – Call Taking" },
+        { "code": "10103230", "description": "Department of Emergency Communications – Dispatch Operations" },
+        { "code": "10103260", "description": "Department of Emergency Communications – Training and Support" },
+        { "code": "10103270", "description": "Department of Emergency Communications – Technical Operations" },
+        { "code": "10103280", "description": "Department of Emergency Communications – Facilities and Logistics" }
+      ]
     }
   ],
   "other_entities": {
     "funds": [
-      { "code": "2101000", "description": "Urban Services District (USD) General Fund" },
-      { "code": "3101000", "description": "GSD Debt Service Fund" },
-      { "code": "3103000", "description": "GSD School Debt Service Fund" },
+      { "code": "10101", "description": "GSD General Fund" },
+      { "code": "18301", "description": "USD General Fund" },
+      { "code": "20115", "description": "GSD Debt Service Fund" },
+      { "code": "28315", "description": "USD Debt Service Fund" },
+      { "code": "35131", "description": "Schools Operating Fund" },
+      { "code": "25104", "description": "Schools Debt Service Fund" },
       { "code": "9101000", "description": "Risk Management / Employee Benefit Board (Internal Service Fund)" }
     ],
     "authorities_and_boards": [
@@ -493,17 +526,6 @@
           { "code": "8126600", "description": "WeGo Public Transit (Metropolitan Transit Authority)" },
           { "code": "8126700", "description": "WeGo Public Transit (Metropolitan Transit Authority)" },
           { "code": "8126800", "description": "WeGo Public Transit (Metropolitan Transit Authority)" }
-        ]
-      },
-      {
-        "name": "Department of Emergency Communications",
-        "business_units": [
-          { "code": "10103210", "description": "Department of Emergency Communications – Administration" },
-          { "code": "10103220", "description": "Department of Emergency Communications – Call Taking" },
-          { "code": "10103230", "description": "Department of Emergency Communications – Dispatch Operations" },
-          { "code": "10103260", "description": "Department of Emergency Communications – Training and Support" },
-          { "code": "10103270", "description": "Department of Emergency Communications – Technical Operations" },
-          { "code": "10103280", "description": "Department of Emergency Communications – Facilities and Logistics" }
         ]
       },
       {
