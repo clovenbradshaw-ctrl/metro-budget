@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>General Fund Expenditures</title>
+    <title>General Fund Expenditures July - August 2025</title>
     <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
     <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
     <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
@@ -14,130 +14,364 @@
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
         }
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
+            min-height: 100vh;
         }
         .header {
-            background: #4a5568;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 30px;
+            padding: 24px 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 16px;
         }
         h1 {
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
         .download-btn {
-            padding: 8px 16px;
-            background: #48bb78;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
             color: white;
-            border: none;
-            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
+            transition: all 0.2s;
         }
         .download-btn:hover {
-            background: #38a169;
+            background: rgba(255,255,255,0.3);
         }
         .content {
-            padding: 20px 30px;
+            padding: 24px 32px;
         }
-        .filters {
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-            margin-bottom: 20px;
+        .toolbar {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             padding: 20px;
-            background: #f7fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
-        .filter-group {
+        .search-input-wrapper {
             flex: 1;
-            min-width: 200px;
+            min-width: 300px;
+            position: relative;
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .date-range-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .date-input {
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            min-width: 150px;
+            transition: all 0.2s;
+        }
+        .date-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .filters-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .filter-group {
+            min-width: 180px;
         }
         .filter-label {
             display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #4a5568;
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .filter-select {
             width: 100%;
             padding: 10px 12px;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
             font-size: 14px;
             background: white;
             cursor: pointer;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
         .filter-select:hover {
-            border-color: #4299e1;
+            border-color: #667eea;
         }
         .filter-select:focus {
             outline: none;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         .action-btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             background: white;
-            color: #4a5568;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px;
+            color: #4b5563;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.2s;
             white-space: nowrap;
         }
         .action-btn:hover {
-            border-color: #4299e1;
-            color: #4299e1;
+            border-color: #667eea;
+            color: #667eea;
+            background: #f9fafb;
         }
         .action-btn.active {
-            background: #4299e1;
+            background: #667eea;
             color: white;
-            border-color: #4299e1;
+            border-color: #667eea;
         }
-        .action-btn.download {
-            background: #48bb78;
+        .clear-btn {
+            padding: 10px 18px;
+            background: #fee;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .clear-btn:hover {
+            background: #fecaca;
+        }
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            padding: 16px 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .ai-legend {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #1e40af;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+        .ai-legend:hover {
+            background: #dbeafe;
+            border-color: #93c5fd;
+        }
+        .ai-legend-icon {
+            font-size: 16px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideIn 0.3s;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-color: #48bb78;
+            padding: 24px 32px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .action-btn.download:hover {
-            background: #38a169;
-            border-color: #38a169;
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .modal-body {
+            padding: 24px 32px;
+            line-height: 1.6;
+            color: #374151;
+        }
+        .modal-body h3 {
+            color: #1f2937;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 10px 0;
+        }
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+        .modal-body ul {
+            margin: 10px 0;
+            padding-left: 24px;
+        }
+        .modal-body li {
+            margin: 8px 0;
+        }
+        .modal-body strong {
+            color: #1f2937;
+        }
+        .modal-footer {
+            padding: 16px 32px 24px;
+            text-align: right;
+        }
+        .close-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .close-btn:hover {
+            background: #5568d3;
+        }
+        .tabulator {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .tabulator .tabulator-header {
+            background: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .tabulator .tabulator-header .tabulator-col {
+            background: transparent;
+            border-right: 1px solid #e5e7eb;
+        }
+        .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+            padding: 12px 10px;
+        }
+        .tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4b5563;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .tabulator .tabulator-row {
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .tabulator .tabulator-row:hover {
+            background: #fafbfc;
+        }
+        .tabulator .tabulator-row .tabulator-cell {
+            border-right: 1px solid #f3f4f6;
+            padding: 12px 10px;
         }
         .loading {
             text-align: center;
-            padding: 60px;
-            color: #718096;
+            padding: 80px 20px;
+            color: #6b7280;
         }
         .spinner {
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #4299e1;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+            width: 48px;
+            height: 48px;
+            animation: spin 0.8s linear infinite;
             margin: 0 auto 20px;
         }
         @keyframes spin {
@@ -146,174 +380,295 @@
         }
         .error {
             padding: 20px;
-            background: #fed7d7;
-            color: #c53030;
-            border-radius: 4px;
+            background: #fee2e2;
+            color: #dc2626;
+            border-radius: 10px;
+            border: 1px solid #fecaca;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 General Fund Expenditures - July & August 2025</h1>
-            <button class="download-btn" onclick="downloadFiltered()">⬇ Download CSV</button>
+            <div class="header-top">
+                <h1>📊 General Fund Expenditures</h1>
+                <button class="download-btn" onclick="downloadFiltered()">↓ Download CSV</button>
+            </div>
         </div>
         <div class="content">
             <div id="loading" class="loading">
                 <div class="spinner"></div>
-                <div>Loading data...</div>
+                <div>Loading expenditure data...</div>
             </div>
             <div id="error" style="display: none;"></div>
-            <div id="filters" class="filters" style="display: none;">
-                <div class="filter-group">
-                    <label class="filter-label">Department</label>
-                    <select id="deptFilter" class="filter-select">
-                        <option value="">All Departments</option>
-                    </select>
+            
+            <div id="toolbar" class="toolbar" style="display: none;">
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input 
+                            type="text" 
+                            id="globalSearch" 
+                            class="search-input" 
+                            placeholder="Search across all fields..."
+                        >
+                    </div>
+                    <div class="date-range-wrapper">
+                        <input 
+                            type="date" 
+                            id="dateFrom" 
+                            class="date-input" 
+                            placeholder="From date"
+                        >
+                        <span style="color: #9ca3af;">→</span>
+                        <input 
+                            type="date" 
+                            id="dateTo" 
+                            class="date-input" 
+                            placeholder="To date"
+                        >
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <label class="filter-label">Expense Category</label>
-                    <select id="objectFilter" class="filter-select">
-                        <option value="">All Categories</option>
-                    </select>
+                
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label class="filter-label">Department</label>
+                        <select id="deptFilter" class="filter-select">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Business Unit Description</label>
+                        <select id="buFilter" class="filter-select">
+                            <option value="">All Business Units</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Object Code</label>
+                        <select id="objCodeFilter" class="filter-select">
+                            <option value="">All Object Codes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Object Description</label>
+                        <select id="objDescFilter" class="filter-select">
+                            <option value="">All Descriptions</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Rows per page</label>
+                        <select id="pageSizeSelect" class="filter-select">
+                            <option value="25">25</option>
+                            <option value="50" selected>50</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                            <option value="500">500</option>
+                        </select>
+                    </div>
+                    <button id="toggleColumns" class="action-btn" onclick="toggleAllColumns()">
+                        Show All Columns
+                    </button>
+                    <button class="clear-btn" onclick="clearAllFilters()">
+                        Clear Filters
+                    </button>
                 </div>
-                <div class="filter-group">
-                    <label class="filter-label">Rows per page</label>
-                    <select id="pageSizeSelect" class="filter-select">
-                        <option value="25">25</option>
-                        <option value="50" selected>50</option>
-                        <option value="100">100</option>
-                        <option value="250">250</option>
-                        <option value="500">500</option>
-                        <option value="1000">1000</option>
-                    </select>
-                </div>
-                <button id="toggleColumns" class="action-btn" onclick="toggleAllColumns()">
-                    Show All Columns
-                </button>
-                <button class="action-btn download" onclick="downloadFiltered()">
-                    ⬇ Download CSV
-                </button>
             </div>
+            
+            <div id="stats" class="stats-bar" style="display: none;">
+                <div class="stat-item">
+                    <span class="stat-label">Total Rows</span>
+                    <span class="stat-value" id="totalRows">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Filtered Rows</span>
+                    <span class="stat-value" id="filteredRows">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Amount</span>
+                    <span class="stat-value" id="totalAmount">$0</span>
+                </div>
+                <div class="ai-legend" onclick="openModal()">
+                    <span class="ai-legend-icon">🤖</span>
+                    <span>AI-Analyzed Fields</span>
+                </div>
+            </div>
+            
             <div id="table"></div>
+        </div>
+    </div>
+
+    <div id="aiModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span style="font-size: 32px;">🤖</span>
+                <h2>AI-Analyzed Fields</h2>
+            </div>
+            <div class="modal-body">
+                <p>Columns marked with 🤖 in the table are <strong>derived from GL Account Strings</strong> using AI-assisted mapping and parsing.</p>
+                
+                <h3>AI-Derived Columns:</h3>
+                <ul>
+                    <li><strong>Department</strong> - Mapped from Business Unit codes in GL strings</li>
+                    <li><strong>Business Unit Description</strong> - Parsed and matched from GL Account String</li>
+                    <li><strong>Object Code</strong> - Extracted from GL Account String segments</li>
+                    <li><strong>Object Description</strong> - Matched from FY26 budget structure</li>
+                </ul>
+
+                <h3>Data Source:</h3>
+                <p>These mappings are based on Metro's FY26 budget documents and organizational structure. The AI analyzes the GL Account String format (e.g., "10101.5010.123") and matches codes to their corresponding descriptions.</p>
+
+                <h3>Accuracy Note:</h3>
+                <p>While substantially accurate for analysis and filtering, <strong>always verify with original expenditure files</strong> for authoritative information and critical decisions.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="close-btn" onclick="closeModal()">Got it</button>
+            </div>
         </div>
     </div>
 
     <script>
         const CSV_URL = 'https://storage.googleapis.com/intelechia-content/metro-budget-data/general%20fund/General%20Fund%2010101%20July%20and%20August%202025%20Expenditures%20-%20PRR%2001936525(Data).csv';
+        const METRO_STRUCTURE_URL = 'https://raw.githubusercontent.com/clovenbradshaw-ctrl/metro-budget/refs/heads/main/metro-data-structure.json';
         
         let tableData = [];
         let table = null;
         let showingAllColumns = false;
+        let metroStructure = null;
+        let businessUnitLookup = {};
+        let objectCodeLookup = {};
 
-        // Priority columns to show by default
         const priorityColumns = [
-            'Department',
             'Total',
-            'GL Date',
+            'Department',
+            'Business Unit Code',
+            'Business Unit Description',
+            'Object Code',
+            'Object Description',
             'Explanation',
+            'GL Date',
             'Address Book Name',
-            'Object Account Descr',
             'Invoice Number',
             'Invoice Date',
             'Payment Date',
             'PO #'
         ];
 
-        // Department mapping - FY2026 Complete List
-        const deptMapping = {
-            "00": "Metro Council",
-            "01": "Vice Mayor",
-            "03": "Office of the Mayor",
-            "04": "Department of Law",
-            "05": "Planning Department",
-            "06": "Election Commission",
-            "07": "Finance Department",
-            "09": "Register of Deeds",
-            "10": "Department of General Services",
-            "11": "Historical Commission",
-            "12": "Codes Department",
-            "13": "Nashville Public Library",
-            "14": "Parks and Recreation",
-            "15": "Public Health Department",
-            "16": "Police Department",
-            "19": "Fire Department",
-            "20": "Water and Sewer Services",
-            "21": "Public Works / NDOT",
-            "22": "Waste Services Division",
-            "24": "Department of Transportation (WeGo/Transit Authority)",
-            "25": "Emergency Communications (911)",
-            "26": "Emergency Management",
-            "27": "Information Technology Services",
-            "30": "Assessor of Property",
-            "31": "County Clerk",
-            "32": "Trustee",
-            "33": "Property Standards / Codes Administration",
-            "35": "Legal Services",
-            "36": "Metro Development and Housing Agency",
-            "39": "Juvenile Court",
-            "40": "General Sessions Court",
-            "41": "Criminal Court Clerk",
-            "45": "Circuit Court Clerk",
-            "46": "Chancery Court",
-            "50": "District Attorney General",
-            "51": "Public Defender",
-            "52": "Metro Action Commission",
-            "53": "Office of Homeless Services",
-            "54": "Social Services",
-            "55": "Office of Family Safety",
-            "56": "Hospital Authority",
-            "57": "Behavioral Health / Supportive Services",
-            "58": "Office of Emergency Management",
-            "59": "Human Resources",
-            "60": "Metro Employee Benefits Board",
-            "61": "Department of Human Relations",
-            "62": "Department of Housing",
-            "63": "Convention Center Authority",
-            "64": "Sports Authority",
-            "65": "Nashville Farmers' Market",
-            "66": "Metropolitan Nashville Arts Commission",
-            "67": "State Fairgrounds Nashville",
-            "70": "Department of Education / MNPS",
-            "71": "Charter Schools Administration",
-            "72": "Davidson County Sheriff's Office",
-            "73": "Justice Integration Services",
-            "75": "Metro Transit Authority / WeGo Public Transit",
-            "78": "Metro Airport Authority",
-            "80": "Convention and Visitors Corporation",
-            "81": "Human Relations Commission",
-            "82": "Metropolitan Clerk's Office",
-            "83": "Internal Audit",
-            "85": "Office of Transportation Licensing Commission",
-            "90": "Industrial Development Board",
-            "91": "Economic and Community Development",
-            "92": "Metro Housing Trust Fund Commission",
-            "96": "Four Percent Reserve Fund",
-            "99": "Finance / Contingency Reserve"
-        };
+        const aiColumns = ['Department', 'Business Unit Description', 'Object Code', 'Object Description'];
 
-        function extractDeptCode(row) {
-            if (row['Business Unit']) {
-                const bu = String(row['Business Unit']);
-                return bu.slice(-2);
-            }
+        function buildBusinessUnitLookup() {
+            businessUnitLookup = {};
             
-            if (row['Account Number']) {
-                const accountNum = String(row['Account Number']);
-                const firstDot = accountNum.indexOf('.');
-                if (firstDot >= 2) {
-                    return accountNum.substring(firstDot - 2, firstDot);
+            metroStructure.departments.forEach(dept => {
+                dept.business_units.forEach(bu => {
+                    businessUnitLookup[bu.code] = {
+                        description: bu.description,
+                        department: dept.name,
+                        departmentCode: dept.code
+                    };
+                });
+            });
+            
+            if (metroStructure.other_entities) {
+                if (metroStructure.other_entities.authorities_and_boards) {
+                    metroStructure.other_entities.authorities_and_boards.forEach(entity => {
+                        entity.business_units.forEach(bu => {
+                            businessUnitLookup[bu.code] = {
+                                description: bu.description,
+                                department: entity.name || 'Other Entities',
+                                departmentCode: entity.code || 'N/A'
+                            };
+                        });
+                    });
+                }
+            }
+        }
+
+        function buildObjectCodeLookup() {
+            objectCodeLookup = {};
+            
+            if (metroStructure.object_codes) {
+                metroStructure.object_codes.forEach(obj => {
+                    objectCodeLookup[obj.code] = obj.description;
+                });
+            }
+        }
+
+        function getObjectCodeInfo(row) {
+            let objectCode = null;
+            
+            if (row['Gl Account String']) {
+                const segments = String(row['Gl Account String']).split('.');
+                if (segments.length > 1) {
+                    objectCode = segments[1];
                 }
             }
             
-            return null;
+            if (!objectCode && row['Account Number']) {
+                const segments = String(row['Account Number']).split('.');
+                if (segments.length > 1) {
+                    objectCode = segments[1];
+                }
+            }
+            
+            if (objectCode && objectCodeLookup[objectCode]) {
+                return {
+                    code: objectCode,
+                    description: objectCodeLookup[objectCode]
+                };
+            }
+            
+            return {
+                code: objectCode || 'N/A',
+                description: 'Unknown Object Code'
+            };
+        }
+
+        function getBusinessUnitInfo(row) {
+            let businessUnitCode = null;
+            
+            if (row['Gl Account String']) {
+                const segments = String(row['Gl Account String']).split('.');
+                if (segments.length > 0) {
+                    businessUnitCode = segments[0];
+                }
+            }
+            
+            if (!businessUnitCode && row['Account Number']) {
+                const segments = String(row['Account Number']).split('.');
+                if (segments.length > 0) {
+                    businessUnitCode = segments[0];
+                }
+            }
+            
+            if (businessUnitCode && businessUnitLookup[businessUnitCode]) {
+                return {
+                    ...businessUnitLookup[businessUnitCode],
+                    businessUnitCode: businessUnitCode
+                };
+            }
+            
+            return {
+                description: 'Unknown Business Unit',
+                department: 'Unconfirmed',
+                departmentCode: 'N/A',
+                businessUnitCode: businessUnitCode || 'N/A'
+            };
         }
 
         async function loadData() {
             try {
-                console.log('Loading from:', CSV_URL);
+                console.log('Loading metro structure...');
                 
-                // Download CSV content directly
+                const structureResponse = await fetch(METRO_STRUCTURE_URL);
+                if (!structureResponse.ok) {
+                    throw new Error(`Failed to fetch metro structure: ${structureResponse.status}`);
+                }
+                
+                metroStructure = await structureResponse.json();
+                buildBusinessUnitLookup();
+                buildObjectCodeLookup();
+                
+                console.log('Loading CSV...');
                 const csvResponse = await fetch(CSV_URL);
                 
                 if (!csvResponse.ok) {
@@ -321,26 +676,30 @@
                 }
                 
                 const csvText = await csvResponse.text();
-                console.log('Parsing CSV...');
                 
-                // Parse CSV
                 const parsed = Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     dynamicTyping: true
                 });
 
-                console.log('Rows parsed:', parsed.data.length);
-
-                // Add department info
                 tableData = parsed.data.map(row => {
-                    const deptCode = extractDeptCode(row);
-                    const deptName = deptCode ? (deptMapping[deptCode] || 'Unknown') : 'Unknown';
+                    const buInfo = getBusinessUnitInfo(row);
+                    const objInfo = getObjectCodeInfo(row);
                     
-                    return {
-                        'Department': deptName,
-                        ...row
+                    const newRow = {
+                        'Department': buInfo.department,
+                        'Business Unit Code': buInfo.businessUnitCode,
+                        'Business Unit Description': buInfo.description,
+                        'Object Code': objInfo.code,
+                        'Object Description': objInfo.description
                     };
+                    
+                    Object.keys(row).forEach(key => {
+                        newRow[key] = row[key];
+                    });
+                    
+                    return newRow;
                 });
 
                 displayData();
@@ -357,13 +716,12 @@
 
         function displayData() {
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('filters').style.display = 'flex';
+            document.getElementById('toolbar').style.display = 'block';
+            document.getElementById('stats').style.display = 'flex';
             
             console.log('Creating table with', tableData.length, 'rows');
-            console.log('Sample row:', tableData[0]);
 
-            // Get all unique departments for filter
-            const departments = [...new Set(tableData.map(row => row.Department))].sort();
+            const departments = [...new Set(tableData.map(row => row['Department']))].filter(x => x).sort();
             const deptFilter = document.getElementById('deptFilter');
             departments.forEach(dept => {
                 const option = document.createElement('option');
@@ -372,57 +730,197 @@
                 deptFilter.appendChild(option);
             });
 
-            // Get all unique object account descriptions for filter
-            const objectAccounts = [...new Set(tableData.map(row => row['Object Account Descr']).filter(x => x))].sort();
-            const objectFilter = document.getElementById('objectFilter');
-            objectAccounts.forEach(obj => {
+            const businessUnits = [...new Set(tableData.map(row => row['Business Unit Description']).filter(x => x))].sort();
+            const buFilter = document.getElementById('buFilter');
+            businessUnits.forEach(bu => {
                 const option = document.createElement('option');
-                option.value = obj;
-                option.textContent = obj;
-                objectFilter.appendChild(option);
+                option.value = bu;
+                option.textContent = bu;
+                buFilter.appendChild(option);
             });
 
-            // Get all column names from first row
-            const allColumns = Object.keys(tableData[0]);
-            
-            // Create column definitions
-            const columns = allColumns.map(col => ({
-                title: col,
-                field: col,
-                visible: priorityColumns.includes(col)
-            }));
+            const objectCodes = [...new Set(tableData.map(row => row['Object Code']).filter(x => x && x !== 'N/A'))].sort();
+            const objCodeFilter = document.getElementById('objCodeFilter');
+            objectCodes.forEach(code => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = code;
+                objCodeFilter.appendChild(option);
+            });
 
-            // Create table
+            const objectDescriptions = [...new Set(tableData.map(row => row['Object Description']).filter(x => x && x !== 'Unknown Object Code'))].sort();
+            const objDescFilter = document.getElementById('objDescFilter');
+            objectDescriptions.forEach(desc => {
+                const option = document.createElement('option');
+                option.value = desc;
+                option.textContent = desc;
+                objDescFilter.appendChild(option);
+            });
+
+            // Build columns in the specific order
+            const allColumnNames = Object.keys(tableData[0]);
+            const columns = [];
+            
+            // First add priority columns in order
+            priorityColumns.forEach(colName => {
+                if (allColumnNames.includes(colName)) {
+                    const config = {
+                        title: colName,
+                        field: colName,
+                        visible: true,
+                        headerSort: true
+                    };
+                    
+                    if (aiColumns.includes(colName)) {
+                        config.titleFormatter = function(cell) {
+                            const title = cell.getValue();
+                            return `${title} 🤖`;
+                        };
+                    }
+                    
+                    if (colName === 'Total' || colName.includes('Amount')) {
+                        config.formatter = function(cell) {
+                            const value = cell.getValue();
+                            if (value && !isNaN(value)) {
+                                return '$' + parseFloat(value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                            }
+                            return value;
+                        };
+                    }
+                    
+                    columns.push(config);
+                }
+            });
+            
+            // Then add remaining columns (hidden by default)
+            allColumnNames.forEach(colName => {
+                if (!priorityColumns.includes(colName)) {
+                    const config = {
+                        title: colName,
+                        field: colName,
+                        visible: false,
+                        headerSort: true
+                    };
+                    
+                    if (colName === 'Total' || colName.includes('Amount')) {
+                        config.formatter = function(cell) {
+                            const value = cell.getValue();
+                            if (value && !isNaN(value)) {
+                                return '$' + parseFloat(value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                            }
+                            return value;
+                        };
+                    }
+                    
+                    columns.push(config);
+                }
+            });
+
             table = new Tabulator("#table", {
                 data: tableData,
                 columns: columns,
-                layout: "fitData",
+                layout: "fitDataStretch",
                 pagination: true,
                 paginationSize: 50,
                 movableColumns: true,
-                resizableColumns: true
+                resizableColumns: true,
+                initialSort: [
+                    {column: "Department", dir: "asc"}
+                ]
             });
 
-            // Add department filter listener
-            deptFilter.addEventListener('change', applyFilters);
-            objectFilter.addEventListener('change', applyFilters);
-
-            // Add page size selector
+            table.on("dataFiltered", updateStats);
+            table.on("dataLoaded", updateStats);
+            
+            document.getElementById('deptFilter').addEventListener('change', applyFilters);
+            document.getElementById('buFilter').addEventListener('change', applyFilters);
+            document.getElementById('objCodeFilter').addEventListener('change', applyFilters);
+            document.getElementById('objDescFilter').addEventListener('change', applyFilters);
+            document.getElementById('globalSearch').addEventListener('input', applyFilters);
+            document.getElementById('dateFrom').addEventListener('change', applyFilters);
+            document.getElementById('dateTo').addEventListener('change', applyFilters);
             document.getElementById('pageSizeSelect').addEventListener('change', function() {
                 table.setPageSize(parseInt(this.value));
             });
+            
+            updateStats();
+            
+            const totalAmountStat = document.querySelector('.stat-item:last-child');
+            if (totalAmountStat) {
+                totalAmountStat.style.display = 'none';
+            }
         }
 
         function applyFilters() {
             const deptValue = document.getElementById('deptFilter').value;
-            const objectValue = document.getElementById('objectFilter').value;
+            const buValue = document.getElementById('buFilter').value;
+            const objCodeValue = document.getElementById('objCodeFilter').value;
+            const objDescValue = document.getElementById('objDescFilter').value;
+            const searchValue = document.getElementById('globalSearch').value.toLowerCase();
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
             
             const filters = [];
+            let hasActiveFilters = false;
+            
             if (deptValue) {
                 filters.push({field: 'Department', type: '=', value: deptValue});
+                hasActiveFilters = true;
             }
-            if (objectValue) {
-                filters.push({field: 'Object Account Descr', type: '=', value: objectValue});
+            if (buValue) {
+                filters.push({field: 'Business Unit Description', type: '=', value: buValue});
+                hasActiveFilters = true;
+            }
+            if (objCodeValue) {
+                filters.push({field: 'Object Code', type: '=', value: objCodeValue});
+                hasActiveFilters = true;
+            }
+            if (objDescValue) {
+                filters.push({field: 'Object Description', type: '=', value: objDescValue});
+                hasActiveFilters = true;
+            }
+            
+            if (searchValue) {
+                hasActiveFilters = true;
+                filters.push(function(data) {
+                    const searchableFields = [
+                        'Department', 'Business Unit Description', 'Business Unit Code',
+                        'Object Code', 'Object Description', 'Explanation',
+                        'Address Book Name', 'Invoice Number', 'PO #'
+                    ];
+                    
+                    return searchableFields.some(field => {
+                        const value = data[field];
+                        return value && String(value).toLowerCase().includes(searchValue);
+                    });
+                });
+            }
+            
+            if (dateFrom || dateTo) {
+                hasActiveFilters = true;
+                filters.push(function(data) {
+                    const dateFields = ['GL Date', 'Invoice Date', 'Payment Date'];
+                    
+                    for (let field of dateFields) {
+                        if (data[field]) {
+                            const rowDate = new Date(data[field]);
+                            
+                            if (dateFrom) {
+                                const fromDate = new Date(dateFrom);
+                                if (rowDate < fromDate) continue;
+                            }
+                            
+                            if (dateTo) {
+                                const toDate = new Date(dateTo);
+                                if (rowDate > toDate) continue;
+                            }
+                            
+                            return true;
+                        }
+                    }
+                    
+                    return false;
+                });
             }
             
             if (filters.length > 0) {
@@ -430,6 +928,56 @@
             } else {
                 table.clearFilter();
             }
+            
+            const totalAmountStat = document.querySelector('.stat-item:last-child');
+            if (totalAmountStat) {
+                totalAmountStat.style.display = hasActiveFilters ? 'flex' : 'none';
+            }
+        }
+
+        function updateStats() {
+            const totalRows = tableData.length;
+            
+            let filteredData = [];
+            if (table.getFilters().length > 0) {
+                filteredData = table.searchData(table.getFilters());
+            } else {
+                filteredData = tableData;
+            }
+            
+            const filteredRows = filteredData.length;
+            
+            let totalAmount = 0;
+            filteredData.forEach(row => {
+                const amount = parseFloat(row['Total']) || 0;
+                totalAmount += amount;
+            });
+            
+            document.getElementById('totalRows').textContent = totalRows.toLocaleString();
+            document.getElementById('filteredRows').textContent = filteredRows.toLocaleString();
+            document.getElementById('totalAmount').textContent = '$' + totalAmount.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function clearAllFilters() {
+            document.getElementById('deptFilter').value = '';
+            document.getElementById('buFilter').value = '';
+            document.getElementById('objCodeFilter').value = '';
+            document.getElementById('objDescFilter').value = '';
+            document.getElementById('globalSearch').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            
+            table.clearFilter();
+            
+            const totalAmountStat = document.querySelector('.stat-item:last-child');
+            if (totalAmountStat) {
+                totalAmountStat.style.display = 'none';
+            }
+            
+            updateStats();
         }
 
         function toggleAllColumns() {
@@ -437,7 +985,6 @@
             const btn = document.getElementById('toggleColumns');
             
             if (showingAllColumns) {
-                // Show all columns
                 const allColumns = table.getColumns();
                 allColumns.forEach(col => {
                     col.show();
@@ -445,7 +992,6 @@
                 btn.textContent = 'Show Essential Columns';
                 btn.classList.add('active');
             } else {
-                // Hide non-priority columns
                 const allColumns = table.getColumns();
                 allColumns.forEach(col => {
                     const field = col.getField();
@@ -459,21 +1005,38 @@
         }
 
         function downloadFiltered() {
-            // Get the filtered data from the table
             const filteredData = table.getData("active");
             
-            // Convert to CSV
-            const csv = Papa.unparse(filteredData);
+            if (filteredData.length === 0) {
+                alert('No data to download. Please adjust your filters.');
+                return;
+            }
             
-            // Create filename with filters
+            // Add asterisks to AI-generated field names
+            const dataWithAsterisk = filteredData.map(row => {
+                const newRow = {};
+                Object.keys(row).forEach(key => {
+                    if (aiColumns.includes(key)) {
+                        newRow[key + ' *'] = row[key];
+                    } else {
+                        newRow[key] = row[key];
+                    }
+                });
+                return newRow;
+            });
+            
+            const csv = Papa.unparse(dataWithAsterisk);
+            
             const deptValue = document.getElementById('deptFilter').value;
-            const objectValue = document.getElementById('objectFilter').value;
+            const buValue = document.getElementById('buFilter').value;
+            const objCodeValue = document.getElementById('objCodeFilter').value;
+            
             let filename = 'general-fund-expenditures';
             if (deptValue) filename += '-' + deptValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-            if (objectValue) filename += '-' + objectValue.substring(0, 30).replace(/[^a-z0-9]/gi, '-').toLowerCase();
-            filename += '.csv';
+            if (buValue) filename += '-' + buValue.substring(0, 40).replace(/[^a-z0-9]/gi, '-').toLowerCase();
+            if (objCodeValue) filename += '-' + objCodeValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+            filename += '-' + new Date().toISOString().split('T')[0] + '.csv';
             
-            // Download
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -485,7 +1048,21 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Load on page load
+        function openModal() {
+            document.getElementById('aiModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('aiModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('aiModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
