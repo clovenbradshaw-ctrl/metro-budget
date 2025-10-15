@@ -162,15 +162,79 @@
 
     <script>
         let tables = {};
-        let currentRepo = '';
+        let currentRepo = 'clovenbradshaw-ctrl/metro-budget';
 
-        // Get repo from URL or use default
-        const urlParams = new URLSearchParams(window.location.search);
-        const repoParam = urlParams.get('repo');
-        if (repoParam) {
-            document.getElementById('repoInput').value = repoParam;
-            loadData();
+        // Department mapping
+        const deptMapping = {
+            "01": "Administration",
+            "02": "Metropolitan Council",
+            "03": "Metropolitan Clerk",
+            "04": "Mayor's Office",
+            "05": "Election Commission",
+            "06": "Department of Law",
+            "07": "Planning Commission",
+            "08": "Human Resources",
+            "09": "Register of Deeds",
+            "10": "General Services",
+            "11": "Historical Commission",
+            "15": "Finance",
+            "16": "Assessor of Property",
+            "17": "Trustee",
+            "18": "County Clerk",
+            "19": "District Attorney",
+            "21": "Public Defender",
+            "22": "Juvenile Court Clerk",
+            "23": "Circuit Court Clerk",
+            "24": "Criminal Court Clerk",
+            "25": "Clerk & Master (Chancery Court)",
+            "26": "Juvenile Court",
+            "27": "General Sessions Court",
+            "28": "State Trial Courts",
+            "29": "Police Department",
+            "30": "Fire Department",
+            "31": "Codes Department",
+            "32": "Public Library",
+            "33": "Parks and Recreation",
+            "34": "Health Department",
+            "35": "Social Services",
+            "36": "Public Works / NDOT",
+            "37": "Water Services",
+            "38": "Farmers Market",
+            "39": "Hospital Authority",
+            "40": "Metropolitan Action Commission",
+            "41": "Office of Family Safety",
+            "42": "Emergency Management",
+            "43": "Emergency Communications",
+            "49": "Office of Emergency Management",
+            "65": "Water Services (detailed rollup)",
+            "91": "Department of Emergency Communication"
+        };
+
+        // Extract department code from Business Unit or Account Number
+        function extractDeptCode(row) {
+            // Try Business Unit first (e.g., 1101109 → 09)
+            if (row['Business Unit']) {
+                const bu = String(row['Business Unit']);
+                return bu.slice(-2);
+            }
+            
+            // Try Account Number (e.g., 01101109.501174.0 → 09)
+            if (row['Account Number']) {
+                const accountNum = String(row['Account Number']);
+                const firstDot = accountNum.indexOf('.');
+                if (firstDot >= 2) {
+                    return accountNum.substring(firstDot - 2, firstDot);
+                }
+            }
+            
+            return null;
         }
+
+        // Automatically load on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('repoInput').value = currentRepo;
+            loadData();
+        });
 
         async function loadData() {
             const repoInput = document.getElementById('repoInput').value.trim();
@@ -234,6 +298,18 @@
 
                 allData = allData.concat(parsed.data);
             }
+
+            // Extract department info and add as first columns
+            allData = allData.map(row => {
+                const deptCode = extractDeptCode(row);
+                const deptName = deptCode ? (deptMapping[deptCode] || 'Unknown') : 'Unknown';
+                
+                return {
+                    'Dept. Code': deptCode || '',
+                    'Department Name': deptName,
+                    ...row
+                };
+            });
 
             tables[folderName] = allData;
         }
