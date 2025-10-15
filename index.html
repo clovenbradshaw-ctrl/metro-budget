@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Viewer</title>
+    <title>General Fund Expenditures</title>
     <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
     <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
     <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
@@ -14,7 +14,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
             padding: 20px;
         }
@@ -35,22 +35,10 @@
             align-items: center;
         }
         h1 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
         }
-        .config {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .config input {
-            padding: 8px 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 4px;
-            font-size: 14px;
-            width: 200px;
-        }
-        .config button {
+        .download-btn {
             padding: 8px 16px;
             background: #48bb78;
             color: white;
@@ -60,65 +48,83 @@
             font-size: 14px;
             font-weight: 500;
         }
-        .config button:hover {
+        .download-btn:hover {
             background: #38a169;
         }
-        .tabs {
-            display: flex;
-            background: #edf2f7;
-            border-bottom: 2px solid #cbd5e0;
-            overflow-x: auto;
+        .content {
+            padding: 20px 30px;
         }
-        .tab {
-            padding: 15px 25px;
+        .filters {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
             cursor: pointer;
-            border: none;
-            background: transparent;
+            transition: border-color 0.2s;
+        }
+        .filter-select:hover {
+            border-color: #4299e1;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        .action-btn {
+            padding: 10px 20px;
+            background: white;
+            color: #4a5568;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            color: #4a5568;
-            white-space: nowrap;
             transition: all 0.2s;
+            white-space: nowrap;
         }
-        .tab:hover {
-            background: #e2e8f0;
+        .action-btn:hover {
+            border-color: #4299e1;
+            color: #4299e1;
         }
-        .tab.active {
-            background: white;
-            color: #2d3748;
-            border-bottom: 2px solid #4299e1;
-            margin-bottom: -2px;
-        }
-        .tab-content {
-            padding: 20px 30px;
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .table-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2d3748;
-        }
-        .download-btn {
-            padding: 8px 16px;
+        .action-btn.active {
             background: #4299e1;
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
+            border-color: #4299e1;
         }
-        .download-btn:hover {
-            background: #3182ce;
+        .action-btn.download {
+            background: #48bb78;
+            color: white;
+            border-color: #48bb78;
+        }
+        .action-btn.download:hover {
+            background: #38a169;
+            border-color: #38a169;
         }
         .loading {
             text-align: center;
@@ -143,82 +149,155 @@
             background: #fed7d7;
             color: #c53030;
             border-radius: 4px;
-            margin: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Data Viewer</h1>
-            <div class="config">
-                <input type="text" id="repoInput" placeholder="username/repo" value="">
-                <button onclick="loadData()">Load Data</button>
-            </div>
+            <h1>📊 General Fund Expenditures - July & August 2025</h1>
+            <button class="download-btn" onclick="downloadFiltered()">⬇ Download CSV</button>
         </div>
-        <div id="tabs" class="tabs"></div>
-        <div id="content"></div>
+        <div class="content">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div>Loading data...</div>
+            </div>
+            <div id="error" style="display: none;"></div>
+            <div id="filters" class="filters" style="display: none;">
+                <div class="filter-group">
+                    <label class="filter-label">Department</label>
+                    <select id="deptFilter" class="filter-select">
+                        <option value="">All Departments</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Expense Category</label>
+                    <select id="objectFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Rows per page</label>
+                    <select id="pageSizeSelect" class="filter-select">
+                        <option value="25">25</option>
+                        <option value="50" selected>50</option>
+                        <option value="100">100</option>
+                        <option value="250">250</option>
+                        <option value="500">500</option>
+                        <option value="1000">1000</option>
+                    </select>
+                </div>
+                <button id="toggleColumns" class="action-btn" onclick="toggleAllColumns()">
+                    Show All Columns
+                </button>
+                <button class="action-btn download" onclick="downloadFiltered()">
+                    ⬇ Download CSV
+                </button>
+            </div>
+            <div id="table"></div>
+        </div>
     </div>
 
     <script>
-        let tables = {};
-        let currentRepo = 'clovenbradshaw-ctrl/metro-budget';
+        const CSV_URL = 'https://storage.googleapis.com/intelechia-content/metro-budget-data/general%20fund/General%20Fund%2010101%20July%20and%20August%202025%20Expenditures%20-%20PRR%2001936525(Data).csv';
+        
+        let tableData = [];
+        let table = null;
+        let showingAllColumns = false;
 
-        // Department mapping
+        // Priority columns to show by default
+        const priorityColumns = [
+            'Department',
+            'Total',
+            'GL Date',
+            'Explanation',
+            'Address Book Name',
+            'Object Account Descr',
+            'Invoice Number',
+            'Invoice Date',
+            'Payment Date',
+            'PO #'
+        ];
+
+        // Department mapping - FY2026 Complete List
         const deptMapping = {
-            "01": "Administration",
-            "02": "Metropolitan Council",
-            "03": "Metropolitan Clerk",
-            "04": "Mayor's Office",
-            "05": "Election Commission",
-            "06": "Department of Law",
-            "07": "Planning Commission",
-            "08": "Human Resources",
+            "00": "Metro Council",
+            "01": "Vice Mayor",
+            "03": "Office of the Mayor",
+            "04": "Department of Law",
+            "05": "Planning Department",
+            "06": "Election Commission",
+            "07": "Finance Department",
             "09": "Register of Deeds",
-            "10": "General Services",
+            "10": "Department of General Services",
             "11": "Historical Commission",
-            "15": "Finance",
-            "16": "Assessor of Property",
-            "17": "Trustee",
-            "18": "County Clerk",
-            "19": "District Attorney",
-            "21": "Public Defender",
-            "22": "Juvenile Court Clerk",
-            "23": "Circuit Court Clerk",
-            "24": "Criminal Court Clerk",
-            "25": "Clerk & Master (Chancery Court)",
-            "26": "Juvenile Court",
-            "27": "General Sessions Court",
-            "28": "State Trial Courts",
-            "29": "Police Department",
-            "30": "Fire Department",
-            "31": "Codes Department",
-            "32": "Public Library",
-            "33": "Parks and Recreation",
-            "34": "Health Department",
-            "35": "Social Services",
-            "36": "Public Works / NDOT",
-            "37": "Water Services",
-            "38": "Farmers Market",
-            "39": "Hospital Authority",
-            "40": "Metropolitan Action Commission",
-            "41": "Office of Family Safety",
-            "42": "Emergency Management",
-            "43": "Emergency Communications",
-            "49": "Office of Emergency Management",
-            "65": "Water Services (detailed rollup)",
-            "91": "Department of Emergency Communication"
+            "12": "Codes Department",
+            "13": "Nashville Public Library",
+            "14": "Parks and Recreation",
+            "15": "Public Health Department",
+            "16": "Police Department",
+            "19": "Fire Department",
+            "20": "Water and Sewer Services",
+            "21": "Public Works / NDOT",
+            "22": "Waste Services Division",
+            "24": "Department of Transportation (WeGo/Transit Authority)",
+            "25": "Emergency Communications (911)",
+            "26": "Emergency Management",
+            "27": "Information Technology Services",
+            "30": "Assessor of Property",
+            "31": "County Clerk",
+            "32": "Trustee",
+            "33": "Property Standards / Codes Administration",
+            "35": "Legal Services",
+            "36": "Metro Development and Housing Agency",
+            "39": "Juvenile Court",
+            "40": "General Sessions Court",
+            "41": "Criminal Court Clerk",
+            "45": "Circuit Court Clerk",
+            "46": "Chancery Court",
+            "50": "District Attorney General",
+            "51": "Public Defender",
+            "52": "Metro Action Commission",
+            "53": "Office of Homeless Services",
+            "54": "Social Services",
+            "55": "Office of Family Safety",
+            "56": "Hospital Authority",
+            "57": "Behavioral Health / Supportive Services",
+            "58": "Office of Emergency Management",
+            "59": "Human Resources",
+            "60": "Metro Employee Benefits Board",
+            "61": "Department of Human Relations",
+            "62": "Department of Housing",
+            "63": "Convention Center Authority",
+            "64": "Sports Authority",
+            "65": "Nashville Farmers' Market",
+            "66": "Metropolitan Nashville Arts Commission",
+            "67": "State Fairgrounds Nashville",
+            "70": "Department of Education / MNPS",
+            "71": "Charter Schools Administration",
+            "72": "Davidson County Sheriff's Office",
+            "73": "Justice Integration Services",
+            "75": "Metro Transit Authority / WeGo Public Transit",
+            "78": "Metro Airport Authority",
+            "80": "Convention and Visitors Corporation",
+            "81": "Human Relations Commission",
+            "82": "Metropolitan Clerk's Office",
+            "83": "Internal Audit",
+            "85": "Office of Transportation Licensing Commission",
+            "90": "Industrial Development Board",
+            "91": "Economic and Community Development",
+            "92": "Metro Housing Trust Fund Commission",
+            "96": "Four Percent Reserve Fund",
+            "99": "Finance / Contingency Reserve"
         };
 
-        // Extract department code from Business Unit or Account Number
         function extractDeptCode(row) {
-            // Try Business Unit first (e.g., 1101109 → 09)
             if (row['Business Unit']) {
                 const bu = String(row['Business Unit']);
                 return bu.slice(-2);
             }
             
-            // Try Account Number (e.g., 01101109.501174.0 → 09)
             if (row['Account Number']) {
                 const accountNum = String(row['Account Number']);
                 const firstDot = accountNum.indexOf('.');
@@ -230,168 +309,184 @@
             return null;
         }
 
-        // Automatically load on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('repoInput').value = currentRepo;
-            loadData();
-        });
-
         async function loadData() {
-            const repoInput = document.getElementById('repoInput').value.trim();
-            if (!repoInput) {
-                alert('Please enter a repository (e.g., username/repo)');
-                return;
-            }
-
-            currentRepo = repoInput;
-            const contentDiv = document.getElementById('content');
-            const tabsDiv = document.getElementById('tabs');
-            
-            contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div><div>Loading data...</div></div>';
-            tabsDiv.innerHTML = '';
-            tables = {};
-
             try {
-                // Get list of folders in data directory
-                const foldersResponse = await fetch(`https://api.github.com/repos/${currentRepo}/contents/data`);
-                if (!foldersResponse.ok) throw new Error('Failed to fetch data folder');
+                console.log('Loading from:', CSV_URL);
                 
-                const items = await foldersResponse.json();
-                const folders = items.filter(item => item.type === 'dir');
-
-                if (folders.length === 0) {
-                    throw new Error('No folders found in data directory');
-                }
-
-                // Load data from each folder
-                for (const folder of folders) {
-                    await loadTableFromFolder(folder.name);
-                }
-
-                // Create tabs and display first table
-                createTabs();
+                // Download CSV content directly
+                const csvResponse = await fetch(CSV_URL);
                 
-            } catch (error) {
-                contentDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-            }
-        }
-
-        async function loadTableFromFolder(folderName) {
-            // Get all CSV files in the folder
-            const filesResponse = await fetch(`https://api.github.com/repos/${currentRepo}/contents/data/${folderName}`);
-            const files = await filesResponse.json();
-            const csvFiles = files.filter(file => file.name.endsWith('.csv'));
-
-            if (csvFiles.length === 0) return;
-
-            // Load and combine all CSVs
-            let allData = [];
-            for (const file of csvFiles) {
-                const csvResponse = await fetch(file.download_url);
+                if (!csvResponse.ok) {
+                    throw new Error(`Failed to fetch CSV: ${csvResponse.status}`);
+                }
+                
                 const csvText = await csvResponse.text();
+                console.log('Parsing CSV...');
                 
+                // Parse CSV
                 const parsed = Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     dynamicTyping: true
                 });
 
-                allData = allData.concat(parsed.data);
-            }
+                console.log('Rows parsed:', parsed.data.length);
 
-            // Extract department info and add as first columns
-            allData = allData.map(row => {
-                const deptCode = extractDeptCode(row);
-                const deptName = deptCode ? (deptMapping[deptCode] || 'Unknown') : 'Unknown';
-                
-                return {
-                    'Dept. Code': deptCode || '',
-                    'Department Name': deptName,
-                    ...row
-                };
-            });
-
-            tables[folderName] = allData;
-        }
-
-        function createTabs() {
-            const tabsDiv = document.getElementById('tabs');
-            const contentDiv = document.getElementById('content');
-            
-            tabsDiv.innerHTML = '';
-            contentDiv.innerHTML = '';
-
-            const tableNames = Object.keys(tables);
-            
-            tableNames.forEach((name, index) => {
-                // Create tab
-                const tab = document.createElement('button');
-                tab.className = 'tab' + (index === 0 ? ' active' : '');
-                tab.textContent = name;
-                tab.onclick = () => switchTab(name);
-                tabsDiv.appendChild(tab);
-
-                // Create tab content
-                const tabContent = document.createElement('div');
-                tabContent.className = 'tab-content' + (index === 0 ? ' active' : '');
-                tabContent.id = `tab-${name}`;
-                
-                tabContent.innerHTML = `
-                    <div class="table-header">
-                        <div class="table-title">${name}</div>
-                        <button class="download-btn" onclick="downloadTable('${name}')">⬇ Download CSV</button>
-                    </div>
-                    <div id="table-${name}"></div>
-                `;
-                
-                contentDiv.appendChild(tabContent);
-
-                // Create Tabulator table
-                new Tabulator(`#table-${name}`, {
-                    data: tables[name],
-                    autoColumns: true,
-                    layout: "fitDataStretch",
-                    pagination: true,
-                    paginationSize: 50,
-                    paginationSizeSelector: [25, 50, 100, 200],
-                    movableColumns: true,
-                    resizableColumns: true,
-                    responsiveLayout: "collapse"
+                // Add department info
+                tableData = parsed.data.map(row => {
+                    const deptCode = extractDeptCode(row);
+                    const deptName = deptCode ? (deptMapping[deptCode] || 'Unknown') : 'Unknown';
+                    
+                    return {
+                        'Department': deptName,
+                        ...row
+                    };
                 });
+
+                displayData();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                const errorDiv = document.getElementById('error');
+                errorDiv.style.display = 'block';
+                errorDiv.className = 'error';
+                errorDiv.innerHTML = `Error: ${error.message}<br><br>Check console for details.`;
+            }
+        }
+
+        function displayData() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('filters').style.display = 'flex';
+            
+            console.log('Creating table with', tableData.length, 'rows');
+            console.log('Sample row:', tableData[0]);
+
+            // Get all unique departments for filter
+            const departments = [...new Set(tableData.map(row => row.Department))].sort();
+            const deptFilter = document.getElementById('deptFilter');
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                deptFilter.appendChild(option);
+            });
+
+            // Get all unique object account descriptions for filter
+            const objectAccounts = [...new Set(tableData.map(row => row['Object Account Descr']).filter(x => x))].sort();
+            const objectFilter = document.getElementById('objectFilter');
+            objectAccounts.forEach(obj => {
+                const option = document.createElement('option');
+                option.value = obj;
+                option.textContent = obj;
+                objectFilter.appendChild(option);
+            });
+
+            // Get all column names from first row
+            const allColumns = Object.keys(tableData[0]);
+            
+            // Create column definitions
+            const columns = allColumns.map(col => ({
+                title: col,
+                field: col,
+                visible: priorityColumns.includes(col)
+            }));
+
+            // Create table
+            table = new Tabulator("#table", {
+                data: tableData,
+                columns: columns,
+                layout: "fitData",
+                pagination: true,
+                paginationSize: 50,
+                movableColumns: true,
+                resizableColumns: true
+            });
+
+            // Add department filter listener
+            deptFilter.addEventListener('change', applyFilters);
+            objectFilter.addEventListener('change', applyFilters);
+
+            // Add page size selector
+            document.getElementById('pageSizeSelect').addEventListener('change', function() {
+                table.setPageSize(parseInt(this.value));
             });
         }
 
-        function switchTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.textContent === tabName) {
-                    tab.classList.add('active');
-                }
-            });
-
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-                if (content.id === `tab-${tabName}`) {
-                    content.classList.add('active');
-                }
-            });
+        function applyFilters() {
+            const deptValue = document.getElementById('deptFilter').value;
+            const objectValue = document.getElementById('objectFilter').value;
+            
+            const filters = [];
+            if (deptValue) {
+                filters.push({field: 'Department', type: '=', value: deptValue});
+            }
+            if (objectValue) {
+                filters.push({field: 'Object Account Descr', type: '=', value: objectValue});
+            }
+            
+            if (filters.length > 0) {
+                table.setFilter(filters);
+            } else {
+                table.clearFilter();
+            }
         }
 
-        function downloadTable(tableName) {
-            const data = tables[tableName];
-            const csv = Papa.unparse(data);
+        function toggleAllColumns() {
+            showingAllColumns = !showingAllColumns;
+            const btn = document.getElementById('toggleColumns');
+            
+            if (showingAllColumns) {
+                // Show all columns
+                const allColumns = table.getColumns();
+                allColumns.forEach(col => {
+                    col.show();
+                });
+                btn.textContent = 'Show Essential Columns';
+                btn.classList.add('active');
+            } else {
+                // Hide non-priority columns
+                const allColumns = table.getColumns();
+                allColumns.forEach(col => {
+                    const field = col.getField();
+                    if (!priorityColumns.includes(field)) {
+                        col.hide();
+                    }
+                });
+                btn.textContent = 'Show All Columns';
+                btn.classList.remove('active');
+            }
+        }
+
+        function downloadFiltered() {
+            // Get the filtered data from the table
+            const filteredData = table.getData("active");
+            
+            // Convert to CSV
+            const csv = Papa.unparse(filteredData);
+            
+            // Create filename with filters
+            const deptValue = document.getElementById('deptFilter').value;
+            const objectValue = document.getElementById('objectFilter').value;
+            let filename = 'general-fund-expenditures';
+            if (deptValue) filename += '-' + deptValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+            if (objectValue) filename += '-' + objectValue.substring(0, 30).replace(/[^a-z0-9]/gi, '-').toLowerCase();
+            filename += '.csv';
+            
+            // Download
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${tableName}.csv`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         }
+
+        // Load on page load
+        window.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 </html>
