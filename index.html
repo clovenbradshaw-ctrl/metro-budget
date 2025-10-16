@@ -136,6 +136,23 @@
             margin-bottom: 16px;
             flex-wrap: wrap;
         }
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
         .date-range-wrapper {
             display: flex;
             gap: 8px;
@@ -438,6 +455,9 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
+            .search-input {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -498,6 +518,12 @@
             <!-- Toolbar Section -->
             <div id="toolbar" class="toolbar">
                 <div class="search-bar">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="🔍 Search transactions..."
+                    >
                     <div class="date-range-wrapper">
                         <input 
                             type="date" 
@@ -725,7 +751,8 @@
             if (glString) {
                 const segments = String(glString).split('.');
                 if (segments.length > 0) {
-                    businessUnitCode = segments[0];
+                    // Remove leading zeros to match structure file format
+                    businessUnitCode = String(parseInt(segments[0], 10));
                 }
             }
             
@@ -1084,6 +1111,7 @@
         }
 
         function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('deptFilter').addEventListener('change', applyFilters);
             document.getElementById('buFilter').addEventListener('change', applyFilters);
             document.getElementById('objCodeFilter').addEventListener('change', applyFilters);
@@ -1098,6 +1126,19 @@
         function applyFilters() {
             const filters = [];
             let hasActiveFilters = false;
+            
+            // Search filter
+            const searchValue = document.getElementById('searchInput').value.trim();
+            if (searchValue) {
+                hasActiveFilters = true;
+                filters.push(function(data) {
+                    const searchLower = searchValue.toLowerCase();
+                    return Object.values(data).some(value => {
+                        if (value === null || value === undefined) return false;
+                        return String(value).toLowerCase().includes(searchLower);
+                    });
+                });
+            }
             
             // Department filter
             const deptValue = document.getElementById('deptFilter').value;
@@ -1199,6 +1240,7 @@
         }
 
         function clearAllFilters() {
+            document.getElementById('searchInput').value = '';
             document.getElementById('deptFilter').value = '';
             document.getElementById('buFilter').value = '';
             document.getElementById('objCodeFilter').value = '';
@@ -1268,11 +1310,13 @@
             const deptValue = document.getElementById('deptFilter').value;
             const buValue = document.getElementById('buFilter').value;
             const objCodeValue = document.getElementById('objCodeFilter').value;
+            const searchValue = document.getElementById('searchInput').value;
             
             let filename = 'general-fund-expenditures';
             if (deptValue) filename += '-' + deptValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
             if (buValue) filename += '-' + buValue.substring(0, 40).replace(/[^a-z0-9]/gi, '-').toLowerCase();
             if (objCodeValue) filename += '-' + objCodeValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+            if (searchValue) filename += '-search';
             filename += '-' + new Date().toISOString().split('T')[0] + '.csv';
             
             const blob = new Blob([csv], { type: 'text/csv' });
