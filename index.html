@@ -56,15 +56,49 @@
         .download-btn:hover {
             background: rgba(255,255,255,0.3);
         }
+        
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px;
+            border-radius: 10px;
+            margin-top: 12px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+        
         .content {
             padding: 24px 32px;
         }
         
-        /* Dashboard Styles */
-        .dashboard {
+        /* View Containers */
+        .view {
             display: none;
-            margin-bottom: 24px;
         }
+        .view.active {
+            display: block;
+        }
+        
+        /* Dashboard Styles */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -128,7 +162,6 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            display: none;
         }
         .search-bar {
             display: flex;
@@ -149,9 +182,6 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .search-input::placeholder {
-            color: #9ca3af;
         }
         .date-range-wrapper {
             display: flex;
@@ -251,7 +281,6 @@
             border-radius: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            display: none;
         }
         .stat-item {
             display: flex;
@@ -288,9 +317,6 @@
             background: #dbeafe;
             border-color: #93c5fd;
         }
-        .ai-legend-icon {
-            font-size: 16px;
-        }
         
         /* Modal Styles */
         .modal {
@@ -315,7 +341,7 @@
             border-radius: 12px;
             width: 90%;
             max-width: 600px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             animation: slideIn 0.3s;
         }
         @keyframes slideIn {
@@ -353,18 +379,12 @@
             font-weight: 700;
             margin: 20px 0 10px 0;
         }
-        .modal-body h3:first-child {
-            margin-top: 0;
-        }
         .modal-body ul {
             margin: 10px 0;
             padding-left: 24px;
         }
         .modal-body li {
             margin: 8px 0;
-        }
-        .modal-body strong {
-            color: #1f2937;
         }
         .modal-footer {
             padding: 16px 32px 24px;
@@ -400,10 +420,7 @@
             background: transparent;
             border-right: 1px solid #e5e7eb;
         }
-        .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
-            padding: 12px 10px;
-        }
-        .tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+        .tabulator .tabulator-header .tabulator-col-title {
             font-size: 12px;
             font-weight: 700;
             color: #4b5563;
@@ -415,10 +432,6 @@
         }
         .tabulator .tabulator-row:hover {
             background: #fafbfc;
-        }
-        .tabulator .tabulator-row .tabulator-cell {
-            border-right: 1px solid #f3f4f6;
-            padding: 12px 10px;
         }
         
         /* Loading Styles */
@@ -455,9 +468,6 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            .search-input {
-                min-width: 100%;
-            }
         }
     </style>
 </head>
@@ -466,7 +476,13 @@
         <div class="header">
             <div class="header-top">
                 <h1>📊 General Fund Expenditures Dashboard</h1>
-                <button class="download-btn" onclick="downloadFiltered()">↓ Download CSV</button>
+                <button class="download-btn" onclick="App.downloadData()">↓ Download CSV</button>
+            </div>
+            <div class="tabs">
+                <button class="tab active" onclick="App.switchView('dashboard')">📈 Dashboard</button>
+                <button class="tab" onclick="App.switchView('transactions')">📋 Transactions</button>
+                <button class="tab" onclick="App.switchView('invoices')">🧾 By Invoice</button>
+                <button class="tab" onclick="App.switchView('vendors')">🏢 By Vendor</button>
             </div>
         </div>
         
@@ -477,8 +493,8 @@
             </div>
             <div id="error" style="display: none;"></div>
             
-            <!-- Dashboard Section -->
-            <div id="dashboard" class="dashboard">
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view active">
                 <div class="dashboard-grid">
                     <div class="metric-card">
                         <div class="metric-label">First Day</div>
@@ -515,313 +531,1019 @@
                 </div>
             </div>
             
-            <!-- Toolbar Section -->
-            <div id="toolbar" class="toolbar">
-                <div class="search-bar">
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        class="search-input" 
-                        placeholder="🔍 Search transactions..."
-                    >
-                    <div class="date-range-wrapper">
-                        <input 
-                            type="date" 
-                            id="dateFrom" 
-                            class="date-input" 
-                            placeholder="From date"
-                        >
-                        <span style="color: #9ca3af;">→</span>
-                        <input 
-                            type="date" 
-                            id="dateTo" 
-                            class="date-input" 
-                            placeholder="To date"
-                        >
+            <!-- Transactions View -->
+            <div id="transactionsView" class="view">
+                <div class="toolbar">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search transactions...">
+                        <div class="date-range-wrapper">
+                            <input type="date" id="dateFrom" class="date-input" placeholder="From date">
+                            <span style="color: #9ca3af;">→</span>
+                            <input type="date" id="dateTo" class="date-input" placeholder="To date">
+                        </div>
+                    </div>
+                    
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label class="filter-label">Department</label>
+                            <select id="deptFilter" class="filter-select">
+                                <option value="">All Departments</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Business Unit</label>
+                            <select id="buFilter" class="filter-select">
+                                <option value="">All Business Units</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Object Code</label>
+                            <select id="objCodeFilter" class="filter-select">
+                                <option value="">All Object Codes</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Rows per page</label>
+                            <select id="pageSizeSelect" class="filter-select">
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                                <option value="250">250</option>
+                            </select>
+                        </div>
+                        <button id="toggleColumns" class="action-btn" onclick="App.toggleAllColumns()">
+                            Show All Columns
+                        </button>
+                        <button class="clear-btn" onclick="App.clearFilters()">
+                            Clear Filters
+                        </button>
                     </div>
                 </div>
                 
-                <div class="filters-section">
-                    <div class="filter-group">
-                        <label class="filter-label">Department</label>
-                        <select id="deptFilter" class="filter-select">
-                            <option value="">All Departments</option>
-                        </select>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Rows</span>
+                        <span class="stat-value" id="totalRows">0</span>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Business Unit Description</label>
-                        <select id="buFilter" class="filter-select">
-                            <option value="">All Business Units</option>
-                        </select>
+                    <div class="stat-item">
+                        <span class="stat-label">Filtered Rows</span>
+                        <span class="stat-value" id="filteredRows">0</span>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Object Code</label>
-                        <select id="objCodeFilter" class="filter-select">
-                            <option value="">All Object Codes</option>
-                        </select>
+                    <div class="stat-item" id="filteredAmountStat" style="display: none;">
+                        <span class="stat-label">Filtered Amount</span>
+                        <span class="stat-value" id="filteredAmount">$0</span>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Object Description</label>
-                        <select id="objDescFilter" class="filter-select">
-                            <option value="">All Descriptions</option>
-                        </select>
+                    <div class="ai-legend" onclick="App.openModal()">
+                        <span>🤖</span>
+                        <span>AI-Analyzed Fields</span>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Rows per page</label>
-                        <select id="pageSizeSelect" class="filter-select">
-                            <option value="25">25</option>
-                            <option value="50" selected>50</option>
-                            <option value="100">100</option>
-                            <option value="250">250</option>
-                            <option value="500">500</option>
-                        </select>
-                    </div>
-                    <button id="toggleColumns" class="action-btn" onclick="toggleAllColumns()">
-                        Show All Columns
-                    </button>
-                    <button class="clear-btn" onclick="clearAllFilters()">
-                        Clear Filters
-                    </button>
                 </div>
+                
+                <div id="transactionsTable"></div>
             </div>
             
-            <!-- Stats Bar -->
-            <div id="stats" class="stats-bar">
-                <div class="stat-item">
-                    <span class="stat-label">Total Rows</span>
-                    <span class="stat-value" id="totalRows">0</span>
+            <!-- Invoices View -->
+            <div id="invoicesView" class="view">
+                <div class="toolbar">
+                    <div class="search-bar">
+                        <input type="text" id="invoiceSearchInput" class="search-input" placeholder="🔍 Search invoices...">
+                    </div>
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label class="filter-label">Rows per page</label>
+                            <select id="invoicePageSize" class="filter-select">
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <button class="clear-btn" onclick="App.clearInvoiceSearch()">
+                            Clear Search
+                        </button>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-label">Filtered Rows</span>
-                    <span class="stat-value" id="filteredRows">0</span>
+                
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Invoices</span>
+                        <span class="stat-value" id="totalInvoices">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Invoice Amount</span>
+                        <span class="stat-value" id="totalInvoiceAmount">$0</span>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-label">Total Amount</span>
-                    <span class="stat-value" id="totalAmount">$0</span>
-                </div>
-                <div class="ai-legend" onclick="openModal()">
-                    <span class="ai-legend-icon">🤖</span>
-                    <span>AI-Analyzed Fields</span>
-                </div>
+                
+                <div id="invoicesTable"></div>
             </div>
             
-            <!-- Table -->
-            <div id="table"></div>
+            <!-- Vendors View -->
+            <div id="vendorsView" class="view">
+                <div class="toolbar">
+                    <div class="search-bar">
+                        <input type="text" id="vendorSearchInput" class="search-input" placeholder="🔍 Search vendors...">
+                    </div>
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label class="filter-label">Rows per page</label>
+                            <select id="vendorPageSize" class="filter-select">
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <button class="clear-btn" onclick="App.clearVendorSearch()">
+                            Clear Search
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Vendors</span>
+                        <span class="stat-value" id="totalVendors">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Vendor Payments</span>
+                        <span class="stat-value" id="totalVendorAmount">$0</span>
+                    </div>
+                </div>
+                
+                <div id="vendorsTable"></div>
+            </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div id="aiModal" class="modal">
+    <div id="aiModal" class="modal" onclick="App.closeModalOnOutsideClick(event)">
         <div class="modal-content">
             <div class="modal-header">
                 <span style="font-size: 32px;">🤖</span>
                 <h2>AI-Analyzed Fields</h2>
             </div>
             <div class="modal-body">
-                <p>Columns marked with 🤖 in the table are <strong>derived from GL Account Strings</strong> using AI-assisted mapping and parsing.</p>
-                
+                <p>Columns marked with 🤖 are derived from GL Account Strings using AI-assisted mapping.</p>
                 <h3>AI-Derived Columns:</h3>
                 <ul>
-                    <li><strong>Department</strong> - Mapped from Business Unit codes in GL strings</li>
-                    <li><strong>Business Unit Description</strong> - Parsed and matched from GL Account String</li>
-                    <li><strong>Object Code</strong> - Extracted from GL Account String segments</li>
-                    <li><strong>Object Description</strong> - Matched from FY26 budget structure</li>
+                    <li><strong>Department</strong> - Mapped from Business Unit codes</li>
+                    <li><strong>Business Unit Description</strong> - Parsed from GL Account String</li>
+                    <li><strong>Object Code</strong> - Extracted from GL Account String</li>
+                    <li><strong>Object Description</strong> - Matched from FY26 budget</li>
                 </ul>
-
-                <h3>Data Source:</h3>
-                <p>These mappings are based on Metro's FY26 budget documents and organizational structure. The AI analyzes the GL Account String format (e.g., "10101.5010.123") and matches codes to their corresponding descriptions.</p>
-
                 <h3>Accuracy Note:</h3>
-                <p>While substantially accurate for analysis and filtering, <strong>always verify with original expenditure files</strong> for authoritative information and critical decisions.</p>
+                <p>Always verify with original files for authoritative information.</p>
             </div>
             <div class="modal-footer">
-                <button class="close-btn" onclick="closeModal()">Got it</button>
+                <button class="close-btn" onclick="App.closeModal()">Got it</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ======================
-        // Configuration
-        // ======================
+        // ========================================
+        // Configuration & Constants
+        // ========================================
         const CONFIG = {
             CSV_URL: 'https://storage.googleapis.com/intelechia-content/metro-budget-data/general%20fund/General%20Fund%2010101%20July%20and%20August%202025%20Expenditures%20-%20PRR%2001936525(Data).csv',
             METRO_STRUCTURE_URL: 'https://raw.githubusercontent.com/clovenbradshaw-ctrl/metro-budget/refs/heads/main/metro-data-structure.json',
             PRIORITY_COLUMNS: [
-                'Total',
-                'Department',
-                'Business Unit Code',
-                'Business Unit Description',
-                'Object Code',
-                'Object Description',
-                'Explanation',
-                'GL Date',
-                'Address Book Name',
-                'Invoice Number',
-                'Invoice Date',
-                'Payment Date',
-                'PO #'
+                'Total', 'Department', 'Business Unit Code', 'Business Unit Description',
+                'Object Code', 'Object Description', 'Explanation', 'GL Date',
+                'Address Book Name', 'Invoice Number', 'Invoice Date', 'Payment Date', 'PO #'
             ],
             AI_COLUMNS: ['Department', 'Business Unit Description', 'Object Code', 'Object Description']
         };
 
-        // ======================
-        // State Management
-        // ======================
-        const state = {
-            tableData: [],
-            table: null,
-            showingAllColumns: false,
-            metroStructure: null,
-            businessUnitLookup: {},
-            objectCodeLookup: {},
-            charts: {
-                department: null,
-                daily: null
-            }
-        };
-
-        // ======================
-        // Data Loading & Processing
-        // ======================
-        function buildBusinessUnitLookup() {
-            state.businessUnitLookup = {};
-            
-            state.metroStructure.departments.forEach(dept => {
-                dept.business_units.forEach(bu => {
-                    state.businessUnitLookup[bu.code] = {
-                        description: bu.description,
-                        department: dept.name,
-                        departmentCode: dept.code
-                    };
-                });
-            });
-            
-            if (state.metroStructure.other_entities?.authorities_and_boards) {
-                state.metroStructure.other_entities.authorities_and_boards.forEach(entity => {
-                    entity.business_units.forEach(bu => {
-                        state.businessUnitLookup[bu.code] = {
-                            description: bu.description,
-                            department: entity.name || 'Other Entities',
-                            departmentCode: entity.code || 'N/A'
-                        };
-                    });
-                });
-            }
-        }
-
-        function buildObjectCodeLookup() {
-            state.objectCodeLookup = {};
-            
-            if (state.metroStructure.object_codes) {
-                state.metroStructure.object_codes.forEach(obj => {
-                    state.objectCodeLookup[obj.code] = obj.description;
-                });
-            }
-        }
-
-        function getObjectCodeInfo(row) {
-            let objectCode = null;
-            
-            const glString = row['Gl Account String'] || row['Account Number'];
-            if (glString) {
-                const segments = String(glString).split('.');
-                if (segments.length > 1) {
-                    objectCode = segments[1];
+        // ========================================
+        // Main Application
+        // ========================================
+        const App = {
+            state: {
+                rawData: [],
+                processedData: [],
+                metroStructure: null,
+                businessUnitLookup: {},
+                objectCodeLookup: {},
+                currentView: 'dashboard',
+                showingAllColumns: false,
+                tables: {
+                    transactions: null,
+                    invoices: null,
+                    vendors: null
+                },
+                charts: {
+                    department: null,
+                    daily: null
                 }
-            }
-            
-            if (objectCode && state.objectCodeLookup[objectCode]) {
-                return {
-                    code: objectCode,
-                    description: state.objectCodeLookup[objectCode]
-                };
-            }
-            
-            return {
-                code: objectCode || 'N/A',
-                description: 'Unknown Object Code'
-            };
-        }
+            },
 
-        function getBusinessUnitInfo(row) {
-            let businessUnitCode = null;
-            
-            const glString = row['Gl Account String'] || row['Account Number'];
-            if (glString) {
-                const segments = String(glString).split('.');
-                if (segments.length > 0) {
-                    // Remove leading zeros to match structure file format
-                    businessUnitCode = String(parseInt(segments[0], 10));
+            // ========================================
+            // Initialization
+            // ========================================
+            async init() {
+                try {
+                    await this.loadMetroStructure();
+                    await this.loadCSVData();
+                    this.processData();
+                    this.initializeDashboard();
+                    this.initializeViews();
+                    this.setupEventListeners();
+                    document.getElementById('loading').style.display = 'none';
+                } catch (error) {
+                    this.showError(error);
                 }
-            }
-            
-            if (businessUnitCode && state.businessUnitLookup[businessUnitCode]) {
-                return {
-                    ...state.businessUnitLookup[businessUnitCode],
-                    businessUnitCode: businessUnitCode
-                };
-            }
-            
-            return {
-                description: 'Unknown Business Unit',
-                department: 'Unconfirmed',
-                departmentCode: 'N/A',
-                businessUnitCode: businessUnitCode || 'N/A'
-            };
-        }
+            },
 
-        async function loadData() {
-            try {
+            async loadMetroStructure() {
                 console.log('Loading metro structure...');
+                const response = await fetch(CONFIG.METRO_STRUCTURE_URL);
+                if (!response.ok) throw new Error(`Failed to fetch structure: ${response.status}`);
                 
-                const structureResponse = await fetch(CONFIG.METRO_STRUCTURE_URL);
-                if (!structureResponse.ok) {
-                    throw new Error(`Failed to fetch metro structure: ${structureResponse.status}`);
-                }
+                this.state.metroStructure = await response.json();
+                this.buildLookupTables();
+            },
+
+            async loadCSVData() {
+                console.log('Loading CSV data...');
+                const response = await fetch(CONFIG.CSV_URL);
+                if (!response.ok) throw new Error(`Failed to fetch CSV: ${response.status}`);
                 
-                state.metroStructure = await structureResponse.json();
-                buildBusinessUnitLookup();
-                buildObjectCodeLookup();
-                
-                console.log('Loading CSV...');
-                const csvResponse = await fetch(CONFIG.CSV_URL);
-                
-                if (!csvResponse.ok) {
-                    throw new Error(`Failed to fetch CSV: ${csvResponse.status}`);
-                }
-                
-                const csvText = await csvResponse.text();
-                
+                const csvText = await response.text();
                 const parsed = Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     dynamicTyping: true
                 });
+                
+                this.state.rawData = parsed.data;
+            },
 
-                state.tableData = parsed.data.map(row => {
-                    const buInfo = getBusinessUnitInfo(row);
-                    const objInfo = getObjectCodeInfo(row);
+            buildLookupTables() {
+                // Business Unit Lookup
+                this.state.metroStructure.departments.forEach(dept => {
+                    dept.business_units.forEach(bu => {
+                        this.state.businessUnitLookup[bu.code] = {
+                            description: bu.description,
+                            department: dept.name,
+                            departmentCode: dept.code
+                        };
+                    });
+                });
+                
+                if (this.state.metroStructure.other_entities?.authorities_and_boards) {
+                    this.state.metroStructure.other_entities.authorities_and_boards.forEach(entity => {
+                        entity.business_units.forEach(bu => {
+                            this.state.businessUnitLookup[bu.code] = {
+                                description: bu.description,
+                                department: entity.name || 'Other Entities',
+                                departmentCode: entity.code || 'N/A'
+                            };
+                        });
+                    });
+                }
+
+                // Object Code Lookup
+                if (this.state.metroStructure.object_codes) {
+                    this.state.metroStructure.object_codes.forEach(obj => {
+                        this.state.objectCodeLookup[obj.code] = obj.description;
+                    });
+                }
+            },
+
+            processData() {
+                this.state.processedData = this.state.rawData.map(row => {
+                    const buInfo = this.getBusinessUnitInfo(row);
+                    const objInfo = this.getObjectCodeInfo(row);
                     
-                    const newRow = {
+                    return {
                         'Department': buInfo.department,
                         'Business Unit Code': buInfo.businessUnitCode,
                         'Business Unit Description': buInfo.description,
                         'Object Code': objInfo.code,
-                        'Object Description': objInfo.description
+                        'Object Description': objInfo.description,
+                        ...row
                     };
-                    
-                    Object.keys(row).forEach(key => {
-                        newRow[key] = row[key];
-                    });
-                    
-                    return newRow;
+                });
+            },
+
+            getBusinessUnitInfo(row) {
+                const glString = row['Gl Account String'] || row['Account Number'];
+                let businessUnitCode = null;
+                
+                if (glString) {
+                    const segments = String(glString).split('.');
+                    if (segments.length > 0) {
+                        businessUnitCode = String(parseInt(segments[0], 10));
+                    }
+                }
+                
+                if (businessUnitCode && this.state.businessUnitLookup[businessUnitCode]) {
+                    return {
+                        ...this.state.businessUnitLookup[businessUnitCode],
+                        businessUnitCode: businessUnitCode
+                    };
+                }
+                
+                return {
+                    description: 'Unknown Business Unit',
+                    department: 'Unconfirmed',
+                    departmentCode: 'N/A',
+                    businessUnitCode: businessUnitCode || 'N/A'
+                };
+            },
+
+            getObjectCodeInfo(row) {
+                const glString = row['Gl Account String'] || row['Account Number'];
+                let objectCode = null;
+                
+                if (glString) {
+                    const segments = String(glString).split('.');
+                    if (segments.length > 1) {
+                        objectCode = segments[1];
+                    }
+                }
+                
+                if (objectCode && this.state.objectCodeLookup[objectCode]) {
+                    return {
+                        code: objectCode,
+                        description: this.state.objectCodeLookup[objectCode]
+                    };
+                }
+                
+                return {
+                    code: objectCode || 'N/A',
+                    description: 'Unknown Object Code'
+                };
+            },
+
+            // ========================================
+            // Dashboard
+            // ========================================
+            initializeDashboard() {
+                const dates = this.state.processedData
+                    .map(row => row['GL Date'] || row['Invoice Date'] || row['Payment Date'])
+                    .filter(d => d)
+                    .map(d => new Date(d))
+                    .sort((a, b) => a - b);
+                
+                if (dates.length === 0) return;
+                
+                const firstDate = dates[0];
+                const lastDate = dates[dates.length - 1];
+                
+                const firstDayData = this.state.processedData.filter(row => {
+                    const rowDate = new Date(row['GL Date'] || row['Invoice Date'] || row['Payment Date']);
+                    return rowDate.toDateString() === firstDate.toDateString();
+                });
+                
+                const lastDayData = this.state.processedData.filter(row => {
+                    const rowDate = new Date(row['GL Date'] || row['Invoice Date'] || row['Payment Date']);
+                    return rowDate.toDateString() === lastDate.toDateString();
+                });
+                
+                const totalAmount = this.state.processedData.reduce((sum, row) => 
+                    sum + (parseFloat(row['Total']) || 0), 0);
+                const avgTransaction = totalAmount / this.state.processedData.length;
+                
+                document.getElementById('firstDay').textContent = firstDate.toLocaleDateString();
+                document.getElementById('firstDayCount').textContent = `${firstDayData.length} transactions`;
+                document.getElementById('lastDay').textContent = lastDate.toLocaleDateString();
+                document.getElementById('lastDayCount').textContent = `${lastDayData.length} transactions`;
+                document.getElementById('totalTransactions').textContent = this.state.processedData.length.toLocaleString();
+                document.getElementById('dateRange').textContent = 
+                    `${firstDate.toLocaleDateString()} - ${lastDate.toLocaleDateString()}`;
+                document.getElementById('dashTotalAmount').textContent = 
+                    '$' + totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('avgTransaction').textContent = 
+                    'Avg: $' + avgTransaction.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                
+                this.createCharts();
+            },
+
+            createCharts() {
+                // Department spending
+                const deptSpending = {};
+                this.state.processedData.forEach(row => {
+                    const dept = row['Department'] || 'Unknown';
+                    const amount = parseFloat(row['Total']) || 0;
+                    deptSpending[dept] = (deptSpending[dept] || 0) + amount;
+                });
+                
+                const deptLabels = Object.keys(deptSpending)
+                    .sort((a, b) => deptSpending[b] - deptSpending[a])
+                    .slice(0, 10);
+                const deptData = deptLabels.map(label => deptSpending[label]);
+                
+                const deptCtx = document.getElementById('departmentChart').getContext('2d');
+                this.state.charts.department = new Chart(deptCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: deptLabels,
+                        datasets: [{
+                            label: 'Spending by Department',
+                            data: deptData,
+                            backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                            borderColor: 'rgba(102, 126, 234, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: true, text: 'Top 10 Departments by Spending' }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: value => '$' + value.toLocaleString() }
+                            },
+                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
+                        }
+                    }
+                });
+                
+                // Daily transactions
+                const dailyData = {};
+                this.state.processedData.forEach(row => {
+                    const date = row['GL Date'] || row['Invoice Date'] || row['Payment Date'];
+                    if (date) {
+                        const dateStr = new Date(date).toLocaleDateString();
+                        dailyData[dateStr] = (dailyData[dateStr] || 0) + 1;
+                    }
+                });
+                
+                const dailyLabels = Object.keys(dailyData).sort((a, b) => new Date(a) - new Date(b));
+                const dailyCounts = dailyLabels.map(label => dailyData[label]);
+                
+                const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+                this.state.charts.daily = new Chart(dailyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dailyLabels,
+                        datasets: [{
+                            label: 'Daily Transactions',
+                            data: dailyCounts,
+                            backgroundColor: 'rgba(118, 75, 162, 0.2)',
+                            borderColor: 'rgba(118, 75, 162, 1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: true, text: 'Transactions Over Time' }
+                        },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            },
+
+            // ========================================
+            // View Initialization
+            // ========================================
+            initializeViews() {
+                this.initializeTransactionsView();
+                this.initializeInvoicesView();
+                this.initializeVendorsView();
+            },
+
+            initializeTransactionsView() {
+                this.populateFilters();
+                
+                const columns = this.buildTransactionColumns();
+                
+                this.state.tables.transactions = new Tabulator("#transactionsTable", {
+                    data: this.state.processedData,
+                    columns: columns,
+                    layout: "fitDataStretch",
+                    pagination: true,
+                    paginationSize: 50,
+                    movableColumns: true,
+                    resizableColumns: true,
+                    initialSort: [{column: "GL Date", dir: "desc"}]
                 });
 
-                initializeDashboard();
-                displayData();
+                this.state.tables.transactions.on("dataFiltered", () => this.updateTransactionStats());
+                this.state.tables.transactions.on("dataLoaded", () => this.updateTransactionStats());
                 
-            } catch (error) {
+                this.updateTransactionStats();
+            },
+
+            buildTransactionColumns() {
+                const allColumnNames = Object.keys(this.state.processedData[0]);
+                const columns = [];
+                
+                CONFIG.PRIORITY_COLUMNS.forEach(colName => {
+                    if (allColumnNames.includes(colName)) {
+                        columns.push(this.createColumnConfig(colName, true));
+                    }
+                });
+                
+                allColumnNames.forEach(colName => {
+                    if (!CONFIG.PRIORITY_COLUMNS.includes(colName)) {
+                        columns.push(this.createColumnConfig(colName, false));
+                    }
+                });
+                
+                return columns;
+            },
+
+            createColumnConfig(colName, visible) {
+                const config = {
+                    title: colName,
+                    field: colName,
+                    visible: visible,
+                    headerSort: true
+                };
+                
+                if (CONFIG.AI_COLUMNS.includes(colName)) {
+                    config.titleFormatter = cell => `${cell.getValue()} 🤖`;
+                }
+                
+                if (colName === 'Total' || colName.includes('Amount')) {
+                    config.formatter = cell => {
+                        const value = cell.getValue();
+                        if (value && !isNaN(value)) {
+                            return '$' + parseFloat(value).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                        return value;
+                    };
+                }
+                
+                return config;
+            },
+
+            initializeInvoicesView() {
+                const invoiceData = this.aggregateByInvoice();
+                
+                this.state.tables.invoices = new Tabulator("#invoicesTable", {
+                    data: invoiceData,
+                    columns: [
+                        {title: "Invoice Number", field: "invoiceNumber", headerSort: true, width: 150},
+                        {title: "Vendor", field: "vendor", headerSort: true},
+                        {title: "Department", field: "department", headerSort: true},
+                        {title: "Transaction Count", field: "count", headerSort: true, width: 150},
+                        {
+                            title: "Total Amount",
+                            field: "totalAmount",
+                            headerSort: true,
+                            width: 150,
+                            formatter: cell => '$' + parseFloat(cell.getValue()).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                        },
+                        {title: "Invoice Date", field: "invoiceDate", headerSort: true, width: 130},
+                        {title: "Payment Date", field: "paymentDate", headerSort: true, width: 130}
+                    ],
+                    layout: "fitDataStretch",
+                    pagination: true,
+                    paginationSize: 50,
+                    initialSort: [{column: "totalAmount", dir: "desc"}]
+                });
+                
+                this.updateInvoiceStats(invoiceData);
+            },
+
+            aggregateByInvoice() {
+                const invoiceMap = {};
+                
+                this.state.processedData.forEach(row => {
+                    const invoiceNumber = row['Invoice Number'] || 'No Invoice';
+                    
+                    if (!invoiceMap[invoiceNumber]) {
+                        invoiceMap[invoiceNumber] = {
+                            invoiceNumber: invoiceNumber,
+                            vendor: row['Address Book Name'] || 'Unknown',
+                            department: row['Department'] || 'Unknown',
+                            invoiceDate: row['Invoice Date'] || '',
+                            paymentDate: row['Payment Date'] || '',
+                            count: 0,
+                            totalAmount: 0
+                        };
+                    }
+                    
+                    invoiceMap[invoiceNumber].count++;
+                    invoiceMap[invoiceNumber].totalAmount += parseFloat(row['Total']) || 0;
+                });
+                
+                return Object.values(invoiceMap);
+            },
+
+            initializeVendorsView() {
+                const vendorData = this.aggregateByVendor();
+                
+                this.state.tables.vendors = new Tabulator("#vendorsTable", {
+                    data: vendorData,
+                    columns: [
+                        {title: "Vendor Name", field: "vendorName", headerSort: true},
+                        {title: "Department", field: "department", headerSort: true},
+                        {title: "Transaction Count", field: "count", headerSort: true, width: 150},
+                        {title: "Invoice Count", field: "invoiceCount", headerSort: true, width: 150},
+                        {
+                            title: "Total Amount",
+                            field: "totalAmount",
+                            headerSort: true,
+                            width: 150,
+                            formatter: cell => '$' + parseFloat(cell.getValue()).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                        },
+                        {title: "First Payment", field: "firstPayment", headerSort: true, width: 130},
+                        {title: "Last Payment", field: "lastPayment", headerSort: true, width: 130}
+                    ],
+                    layout: "fitDataStretch",
+                    pagination: true,
+                    paginationSize: 50,
+                    initialSort: [{column: "totalAmount", dir: "desc"}]
+                });
+                
+                this.updateVendorStats(vendorData);
+            },
+
+            aggregateByVendor() {
+                const vendorMap = {};
+                
+                this.state.processedData.forEach(row => {
+                    const vendorName = row['Address Book Name'] || 'Unknown Vendor';
+                    
+                    if (!vendorMap[vendorName]) {
+                        vendorMap[vendorName] = {
+                            vendorName: vendorName,
+                            department: row['Department'] || 'Unknown',
+                            count: 0,
+                            invoiceCount: 0,
+                            totalAmount: 0,
+                            invoices: new Set(),
+                            payments: []
+                        };
+                    }
+                    
+                    vendorMap[vendorName].count++;
+                    vendorMap[vendorName].totalAmount += parseFloat(row['Total']) || 0;
+                    
+                    if (row['Invoice Number']) {
+                        vendorMap[vendorName].invoices.add(row['Invoice Number']);
+                    }
+                    
+                    const paymentDate = row['Payment Date'] || row['GL Date'];
+                    if (paymentDate) {
+                        vendorMap[vendorName].payments.push(new Date(paymentDate));
+                    }
+                });
+                
+                return Object.values(vendorMap).map(vendor => {
+                    vendor.invoiceCount = vendor.invoices.size;
+                    vendor.payments.sort((a, b) => a - b);
+                    vendor.firstPayment = vendor.payments[0]?.toLocaleDateString() || '';
+                    vendor.lastPayment = vendor.payments[vendor.payments.length - 1]?.toLocaleDateString() || '';
+                    delete vendor.invoices;
+                    delete vendor.payments;
+                    return vendor;
+                });
+            },
+
+            // ========================================
+            // Event Listeners & Filtering
+            // ========================================
+            setupEventListeners() {
+                document.getElementById('searchInput').addEventListener('input', () => this.applyTransactionFilters());
+                document.getElementById('deptFilter').addEventListener('change', () => this.applyTransactionFilters());
+                document.getElementById('buFilter').addEventListener('change', () => this.applyTransactionFilters());
+                document.getElementById('objCodeFilter').addEventListener('change', () => this.applyTransactionFilters());
+                document.getElementById('dateFrom').addEventListener('change', () => this.applyTransactionFilters());
+                document.getElementById('dateTo').addEventListener('change', () => this.applyTransactionFilters());
+                document.getElementById('pageSizeSelect').addEventListener('change', (e) => {
+                    this.state.tables.transactions.setPageSize(parseInt(e.target.value));
+                });
+                
+                document.getElementById('invoiceSearchInput').addEventListener('input', () => this.applyInvoiceFilter());
+                document.getElementById('invoicePageSize').addEventListener('change', (e) => {
+                    this.state.tables.invoices.setPageSize(parseInt(e.target.value));
+                });
+                
+                document.getElementById('vendorSearchInput').addEventListener('input', () => this.applyVendorFilter());
+                document.getElementById('vendorPageSize').addEventListener('change', (e) => {
+                    this.state.tables.vendors.setPageSize(parseInt(e.target.value));
+                });
+            },
+
+            applyTransactionFilters() {
+                const filters = [];
+                let hasActiveFilters = false;
+                
+                // Search filter
+                const searchValue = document.getElementById('searchInput').value.trim();
+                if (searchValue) {
+                    hasActiveFilters = true;
+                    filters.push(data => {
+                        const searchLower = searchValue.toLowerCase();
+                        return Object.values(data).some(value => {
+                            if (value === null || value === undefined) return false;
+                            return String(value).toLowerCase().includes(searchLower);
+                        });
+                    });
+                }
+                
+                // Department filter
+                const deptValue = document.getElementById('deptFilter').value;
+                if (deptValue) {
+                    filters.push(data => data['Department'] === deptValue);
+                    hasActiveFilters = true;
+                }
+                
+                // Business Unit filter
+                const buValue = document.getElementById('buFilter').value;
+                if (buValue) {
+                    filters.push(data => data['Business Unit Description'] === buValue);
+                    hasActiveFilters = true;
+                }
+                
+                // Object Code filter
+                const objCodeValue = document.getElementById('objCodeFilter').value;
+                if (objCodeValue) {
+                    filters.push(data => data['Object Code'] === objCodeValue);
+                    hasActiveFilters = true;
+                }
+                
+                // Date range filter
+                const dateFrom = document.getElementById('dateFrom').value;
+                const dateTo = document.getElementById('dateTo').value;
+                if (dateFrom || dateTo) {
+                    hasActiveFilters = true;
+                    filters.push(data => {
+                        const dateFields = ['GL Date', 'Invoice Date', 'Payment Date'];
+                        
+                        for (let field of dateFields) {
+                            if (data[field]) {
+                                const rowDate = new Date(data[field]);
+                                
+                                if (dateFrom) {
+                                    const fromDate = new Date(dateFrom);
+                                    if (rowDate < fromDate) continue;
+                                }
+                                
+                                if (dateTo) {
+                                    const toDate = new Date(dateTo);
+                                    toDate.setHours(23, 59, 59, 999);
+                                    if (rowDate > toDate) continue;
+                                }
+                                
+                                return true;
+                            }
+                        }
+                        
+                        return false;
+                    });
+                }
+                
+                // Apply filters
+                if (filters.length > 0) {
+                    this.state.tables.transactions.setFilter(data => {
+                        return filters.every(filterFn => filterFn(data));
+                    });
+                } else {
+                    this.state.tables.transactions.clearFilter();
+                }
+                
+                // Show/hide filtered amount stat
+                const filteredAmountStat = document.getElementById('filteredAmountStat');
+                if (filteredAmountStat) {
+                    filteredAmountStat.style.display = hasActiveFilters ? 'flex' : 'none';
+                }
+            },
+
+            applyInvoiceFilter() {
+                const searchValue = document.getElementById('invoiceSearchInput').value.trim();
+                
+                if (searchValue) {
+                    this.state.tables.invoices.setFilter(data => {
+                        const searchLower = searchValue.toLowerCase();
+                        return Object.values(data).some(value => {
+                            if (value === null || value === undefined) return false;
+                            return String(value).toLowerCase().includes(searchLower);
+                        });
+                    });
+                } else {
+                    this.state.tables.invoices.clearFilter();
+                }
+            },
+
+            applyVendorFilter() {
+                const searchValue = document.getElementById('vendorSearchInput').value.trim();
+                
+                if (searchValue) {
+                    this.state.tables.vendors.setFilter(data => {
+                        const searchLower = searchValue.toLowerCase();
+                        return Object.values(data).some(value => {
+                            if (value === null || value === undefined) return false;
+                            return String(value).toLowerCase().includes(searchLower);
+                        });
+                    });
+                } else {
+                    this.state.tables.vendors.clearFilter();
+                }
+            },
+
+            // ========================================
+            // Stats Updates
+            // ========================================
+            updateTransactionStats() {
+                const totalRows = this.state.processedData.length;
+                
+                let filteredData = [];
+                if (this.state.tables.transactions.getFilters().length > 0) {
+                    filteredData = this.state.tables.transactions.searchData(
+                        this.state.tables.transactions.getFilters()
+                    );
+                } else {
+                    filteredData = this.state.processedData;
+                }
+                
+                const filteredRows = filteredData.length;
+                const totalAmount = filteredData.reduce((sum, row) => 
+                    sum + (parseFloat(row['Total']) || 0), 0);
+                
+                document.getElementById('totalRows').textContent = totalRows.toLocaleString();
+                document.getElementById('filteredRows').textContent = filteredRows.toLocaleString();
+                document.getElementById('filteredAmount').textContent = 
+                    '$' + totalAmount.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            },
+
+            updateInvoiceStats(invoiceData) {
+                const totalInvoices = invoiceData.length;
+                const totalAmount = invoiceData.reduce((sum, inv) => sum + inv.totalAmount, 0);
+                
+                document.getElementById('totalInvoices').textContent = totalInvoices.toLocaleString();
+                document.getElementById('totalInvoiceAmount').textContent = 
+                    '$' + totalAmount.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            },
+
+            updateVendorStats(vendorData) {
+                const totalVendors = vendorData.length;
+                const totalAmount = vendorData.reduce((sum, vendor) => sum + vendor.totalAmount, 0);
+                
+                document.getElementById('totalVendors').textContent = totalVendors.toLocaleString();
+                document.getElementById('totalVendorAmount').textContent = 
+                    '$' + totalAmount.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            },
+
+            // ========================================
+            // UI Actions
+            // ========================================
+            switchView(viewName) {
+                this.state.currentView = viewName;
+                
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                event.target.classList.add('active');
+                
+                document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+                document.getElementById(viewName + 'View').classList.add('active');
+            },
+
+            populateFilters() {
+                const departments = [...new Set(this.state.processedData.map(row => row['Department']))]
+                    .filter(x => x).sort();
+                const deptFilter = document.getElementById('deptFilter');
+                departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    deptFilter.appendChild(option);
+                });
+
+                const businessUnits = [...new Set(this.state.processedData.map(row => 
+                    row['Business Unit Description']).filter(x => x))].sort();
+                const buFilter = document.getElementById('buFilter');
+                businessUnits.forEach(bu => {
+                    const option = document.createElement('option');
+                    option.value = bu;
+                    option.textContent = bu;
+                    buFilter.appendChild(option);
+                });
+
+                const objectCodes = [...new Set(this.state.processedData.map(row => 
+                    row['Object Code']).filter(x => x && x !== 'N/A'))].sort();
+                const objCodeFilter = document.getElementById('objCodeFilter');
+                objectCodes.forEach(code => {
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = code;
+                    objCodeFilter.appendChild(option);
+                });
+            },
+
+            clearFilters() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('deptFilter').value = '';
+                document.getElementById('buFilter').value = '';
+                document.getElementById('objCodeFilter').value = '';
+                document.getElementById('dateFrom').value = '';
+                document.getElementById('dateTo').value = '';
+                
+                this.state.tables.transactions.clearFilter();
+                document.getElementById('filteredAmountStat').style.display = 'none';
+                this.updateTransactionStats();
+            },
+
+            clearInvoiceSearch() {
+                document.getElementById('invoiceSearchInput').value = '';
+                this.state.tables.invoices.clearFilter();
+            },
+
+            clearVendorSearch() {
+                document.getElementById('vendorSearchInput').value = '';
+                this.state.tables.vendors.clearFilter();
+            },
+
+            toggleAllColumns() {
+                this.state.showingAllColumns = !this.state.showingAllColumns;
+                const btn = document.getElementById('toggleColumns');
+                
+                if (this.state.showingAllColumns) {
+                    this.state.tables.transactions.getColumns().forEach(col => col.show());
+                    btn.textContent = 'Show Essential Columns';
+                    btn.classList.add('active');
+                } else {
+                    this.state.tables.transactions.getColumns().forEach(col => {
+                        const field = col.getField();
+                        if (!CONFIG.PRIORITY_COLUMNS.includes(field)) {
+                            col.hide();
+                        }
+                    });
+                    btn.textContent = 'Show All Columns';
+                    btn.classList.remove('active');
+                }
+            },
+
+            downloadData() {
+                let dataToExport = [];
+                let filename = 'metro-expenditures';
+                
+                if (this.state.currentView === 'transactions') {
+                    dataToExport = this.state.tables.transactions.getData("active");
+                    filename = 'transactions';
+                } else if (this.state.currentView === 'invoices') {
+                    dataToExport = this.state.tables.invoices.getData("active");
+                    filename = 'invoices';
+                } else if (this.state.currentView === 'vendors') {
+                    dataToExport = this.state.tables.vendors.getData("active");
+                    filename = 'vendors';
+                } else {
+                    dataToExport = this.state.processedData;
+                }
+                
+                if (dataToExport.length === 0) {
+                    alert('No data to download.');
+                    return;
+                }
+                
+                const csv = Papa.unparse(dataToExport);
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            },
+
+            openModal() {
+                document.getElementById('aiModal').style.display = 'block';
+            },
+
+            closeModal() {
+                document.getElementById('aiModal').style.display = 'none';
+            },
+
+            closeModalOnOutsideClick(event) {
+                if (event.target === document.getElementById('aiModal')) {
+                    this.closeModal();
+                }
+            },
+
+            showError(error) {
                 console.error('Error:', error);
                 document.getElementById('loading').style.display = 'none';
                 const errorDiv = document.getElementById('error');
@@ -829,529 +1551,12 @@
                 errorDiv.className = 'error';
                 errorDiv.innerHTML = `Error: ${error.message}<br><br>Check console for details.`;
             }
-        }
+        };
 
-        // ======================
-        // Dashboard Functions
-        // ======================
-        function initializeDashboard() {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            
-            // Calculate dashboard metrics
-            const dates = state.tableData
-                .map(row => row['GL Date'] || row['Invoice Date'] || row['Payment Date'])
-                .filter(d => d)
-                .map(d => new Date(d))
-                .sort((a, b) => a - b);
-            
-            if (dates.length === 0) return;
-            
-            const firstDate = dates[0];
-            const lastDate = dates[dates.length - 1];
-            
-            // First day transactions
-            const firstDayData = state.tableData.filter(row => {
-                const rowDate = new Date(row['GL Date'] || row['Invoice Date'] || row['Payment Date']);
-                return rowDate.toDateString() === firstDate.toDateString();
-            });
-            
-            // Last day transactions
-            const lastDayData = state.tableData.filter(row => {
-                const rowDate = new Date(row['GL Date'] || row['Invoice Date'] || row['Payment Date']);
-                return rowDate.toDateString() === lastDate.toDateString();
-            });
-            
-            // Calculate totals
-            const totalAmount = state.tableData.reduce((sum, row) => sum + (parseFloat(row['Total']) || 0), 0);
-            const avgTransaction = totalAmount / state.tableData.length;
-            
-            // Update dashboard
-            document.getElementById('firstDay').textContent = firstDate.toLocaleDateString();
-            document.getElementById('firstDayCount').textContent = `${firstDayData.length} transactions`;
-            document.getElementById('lastDay').textContent = lastDate.toLocaleDateString();
-            document.getElementById('lastDayCount').textContent = `${lastDayData.length} transactions`;
-            document.getElementById('totalTransactions').textContent = state.tableData.length.toLocaleString();
-            document.getElementById('dateRange').textContent = `${firstDate.toLocaleDateString()} - ${lastDate.toLocaleDateString()}`;
-            document.getElementById('dashTotalAmount').textContent = '$' + totalAmount.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            document.getElementById('avgTransaction').textContent = 'Avg: $' + avgTransaction.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            
-            createCharts();
-        }
-
-        function createCharts() {
-            // Department spending chart
-            const deptSpending = {};
-            state.tableData.forEach(row => {
-                const dept = row['Department'] || 'Unknown';
-                const amount = parseFloat(row['Total']) || 0;
-                deptSpending[dept] = (deptSpending[dept] || 0) + amount;
-            });
-            
-            const deptLabels = Object.keys(deptSpending).sort((a, b) => deptSpending[b] - deptSpending[a]).slice(0, 10);
-            const deptData = deptLabels.map(label => deptSpending[label]);
-            
-            const deptCtx = document.getElementById('departmentChart').getContext('2d');
-            state.charts.department = new Chart(deptCtx, {
-                type: 'bar',
-                data: {
-                    labels: deptLabels,
-                    datasets: [{
-                        label: 'Spending by Department',
-                        data: deptData,
-                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Top 10 Departments by Spending'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString();
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 45
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Daily transactions chart
-            const dailyData = {};
-            state.tableData.forEach(row => {
-                const date = row['GL Date'] || row['Invoice Date'] || row['Payment Date'];
-                if (date) {
-                    const dateStr = new Date(date).toLocaleDateString();
-                    dailyData[dateStr] = (dailyData[dateStr] || 0) + 1;
-                }
-            });
-            
-            const dailyLabels = Object.keys(dailyData).sort((a, b) => new Date(a) - new Date(b));
-            const dailyCounts = dailyLabels.map(label => dailyData[label]);
-            
-            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
-            state.charts.daily = new Chart(dailyCtx, {
-                type: 'line',
-                data: {
-                    labels: dailyLabels,
-                    datasets: [{
-                        label: 'Daily Transactions',
-                        data: dailyCounts,
-                        backgroundColor: 'rgba(118, 75, 162, 0.2)',
-                        borderColor: 'rgba(118, 75, 162, 1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Transactions Over Time'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        // ======================
-        // Table Functions
-        // ======================
-        function displayData() {
-            document.getElementById('toolbar').style.display = 'block';
-            document.getElementById('stats').style.display = 'flex';
-            
-            console.log('Creating table with', state.tableData.length, 'rows');
-
-            // Populate filter dropdowns
-            populateFilters();
-
-            // Build columns
-            const allColumnNames = Object.keys(state.tableData[0]);
-            const columns = [];
-            
-            // Priority columns first
-            CONFIG.PRIORITY_COLUMNS.forEach(colName => {
-                if (allColumnNames.includes(colName)) {
-                    columns.push(createColumnConfig(colName, true));
-                }
-            });
-            
-            // Remaining columns (hidden by default)
-            allColumnNames.forEach(colName => {
-                if (!CONFIG.PRIORITY_COLUMNS.includes(colName)) {
-                    columns.push(createColumnConfig(colName, false));
-                }
-            });
-
-            // Initialize table
-            state.table = new Tabulator("#table", {
-                data: state.tableData,
-                columns: columns,
-                layout: "fitDataStretch",
-                pagination: true,
-                paginationSize: 50,
-                movableColumns: true,
-                resizableColumns: true,
-                initialSort: [
-                    {column: "GL Date", dir: "desc"}
-                ]
-            });
-
-            state.table.on("dataFiltered", updateStats);
-            state.table.on("dataLoaded", updateStats);
-            
-            // Setup event listeners
-            setupEventListeners();
-            updateStats();
-        }
-
-        function createColumnConfig(colName, visible) {
-            const config = {
-                title: colName,
-                field: colName,
-                visible: visible,
-                headerSort: true
-            };
-            
-            if (CONFIG.AI_COLUMNS.includes(colName)) {
-                config.titleFormatter = function(cell) {
-                    return `${cell.getValue()} 🤖`;
-                };
-            }
-            
-            if (colName === 'Total' || colName.includes('Amount')) {
-                config.formatter = function(cell) {
-                    const value = cell.getValue();
-                    if (value && !isNaN(value)) {
-                        return '$' + parseFloat(value).toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
-                    }
-                    return value;
-                };
-            }
-            
-            return config;
-        }
-
-        function populateFilters() {
-            const departments = [...new Set(state.tableData.map(row => row['Department']))].filter(x => x).sort();
-            const deptFilter = document.getElementById('deptFilter');
-            departments.forEach(dept => {
-                const option = document.createElement('option');
-                option.value = dept;
-                option.textContent = dept;
-                deptFilter.appendChild(option);
-            });
-
-            const businessUnits = [...new Set(state.tableData.map(row => row['Business Unit Description']).filter(x => x))].sort();
-            const buFilter = document.getElementById('buFilter');
-            businessUnits.forEach(bu => {
-                const option = document.createElement('option');
-                option.value = bu;
-                option.textContent = bu;
-                buFilter.appendChild(option);
-            });
-
-            const objectCodes = [...new Set(state.tableData.map(row => row['Object Code']).filter(x => x && x !== 'N/A'))].sort();
-            const objCodeFilter = document.getElementById('objCodeFilter');
-            objectCodes.forEach(code => {
-                const option = document.createElement('option');
-                option.value = code;
-                option.textContent = code;
-                objCodeFilter.appendChild(option);
-            });
-
-            const objectDescriptions = [...new Set(state.tableData.map(row => row['Object Description']).filter(x => x && x !== 'Unknown Object Code'))].sort();
-            const objDescFilter = document.getElementById('objDescFilter');
-            objectDescriptions.forEach(desc => {
-                const option = document.createElement('option');
-                option.value = desc;
-                option.textContent = desc;
-                objDescFilter.appendChild(option);
-            });
-        }
-
-        function setupEventListeners() {
-            document.getElementById('searchInput').addEventListener('input', applyFilters);
-            document.getElementById('deptFilter').addEventListener('change', applyFilters);
-            document.getElementById('buFilter').addEventListener('change', applyFilters);
-            document.getElementById('objCodeFilter').addEventListener('change', applyFilters);
-            document.getElementById('objDescFilter').addEventListener('change', applyFilters);
-            document.getElementById('dateFrom').addEventListener('change', applyFilters);
-            document.getElementById('dateTo').addEventListener('change', applyFilters);
-            document.getElementById('pageSizeSelect').addEventListener('change', function() {
-                state.table.setPageSize(parseInt(this.value));
-            });
-        }
-
-        function applyFilters() {
-            const filters = [];
-            let hasActiveFilters = false;
-            
-            // Search filter
-            const searchValue = document.getElementById('searchInput').value.trim();
-            if (searchValue) {
-                hasActiveFilters = true;
-                filters.push(function(data) {
-                    const searchLower = searchValue.toLowerCase();
-                    return Object.values(data).some(value => {
-                        if (value === null || value === undefined) return false;
-                        return String(value).toLowerCase().includes(searchLower);
-                    });
-                });
-            }
-            
-            // Department filter
-            const deptValue = document.getElementById('deptFilter').value;
-            if (deptValue) {
-                filters.push({field: 'Department', type: '=', value: deptValue});
-                hasActiveFilters = true;
-            }
-            
-            // Business Unit filter
-            const buValue = document.getElementById('buFilter').value;
-            if (buValue) {
-                filters.push({field: 'Business Unit Description', type: '=', value: buValue});
-                hasActiveFilters = true;
-            }
-            
-            // Object Code filter
-            const objCodeValue = document.getElementById('objCodeFilter').value;
-            if (objCodeValue) {
-                filters.push({field: 'Object Code', type: '=', value: objCodeValue});
-                hasActiveFilters = true;
-            }
-            
-            // Object Description filter
-            const objDescValue = document.getElementById('objDescFilter').value;
-            if (objDescValue) {
-                filters.push({field: 'Object Description', type: '=', value: objDescValue});
-                hasActiveFilters = true;
-            }
-            
-            // Date range filter
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            if (dateFrom || dateTo) {
-                hasActiveFilters = true;
-                filters.push(function(data) {
-                    const dateFields = ['GL Date', 'Invoice Date', 'Payment Date'];
-                    
-                    for (let field of dateFields) {
-                        if (data[field]) {
-                            const rowDate = new Date(data[field]);
-                            
-                            if (dateFrom) {
-                                const fromDate = new Date(dateFrom);
-                                if (rowDate < fromDate) continue;
-                            }
-                            
-                            if (dateTo) {
-                                const toDate = new Date(dateTo);
-                                toDate.setHours(23, 59, 59, 999);
-                                if (rowDate > toDate) continue;
-                            }
-                            
-                            return true;
-                        }
-                    }
-                    
-                    return false;
-                });
-            }
-            
-            // Apply filters
-            if (filters.length > 0) {
-                state.table.setFilter(filters);
-            } else {
-                state.table.clearFilter();
-            }
-            
-            // Show/hide total amount stat based on active filters
-            const totalAmountStat = document.querySelector('.stat-item:nth-child(3)');
-            if (totalAmountStat) {
-                totalAmountStat.style.display = hasActiveFilters ? 'flex' : 'none';
-            }
-        }
-
-        function updateStats() {
-            const totalRows = state.tableData.length;
-            
-            let filteredData = [];
-            if (state.table.getFilters().length > 0) {
-                filteredData = state.table.searchData(state.table.getFilters());
-            } else {
-                filteredData = state.tableData;
-            }
-            
-            const filteredRows = filteredData.length;
-            
-            let totalAmount = 0;
-            filteredData.forEach(row => {
-                const amount = parseFloat(row['Total']) || 0;
-                totalAmount += amount;
-            });
-            
-            document.getElementById('totalRows').textContent = totalRows.toLocaleString();
-            document.getElementById('filteredRows').textContent = filteredRows.toLocaleString();
-            document.getElementById('totalAmount').textContent = '$' + totalAmount.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-
-        function clearAllFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('deptFilter').value = '';
-            document.getElementById('buFilter').value = '';
-            document.getElementById('objCodeFilter').value = '';
-            document.getElementById('objDescFilter').value = '';
-            document.getElementById('dateFrom').value = '';
-            document.getElementById('dateTo').value = '';
-            
-            state.table.clearFilter();
-            
-            const totalAmountStat = document.querySelector('.stat-item:nth-child(3)');
-            if (totalAmountStat) {
-                totalAmountStat.style.display = 'none';
-            }
-            
-            updateStats();
-        }
-
-        function toggleAllColumns() {
-            state.showingAllColumns = !state.showingAllColumns;
-            const btn = document.getElementById('toggleColumns');
-            
-            if (state.showingAllColumns) {
-                const allColumns = state.table.getColumns();
-                allColumns.forEach(col => {
-                    col.show();
-                });
-                btn.textContent = 'Show Essential Columns';
-                btn.classList.add('active');
-            } else {
-                const allColumns = state.table.getColumns();
-                allColumns.forEach(col => {
-                    const field = col.getField();
-                    if (!CONFIG.PRIORITY_COLUMNS.includes(field)) {
-                        col.hide();
-                    }
-                });
-                btn.textContent = 'Show All Columns';
-                btn.classList.remove('active');
-            }
-        }
-
-        // ======================
-        // Export Functions
-        // ======================
-        function downloadFiltered() {
-            const filteredData = state.table.getData("active");
-            
-            if (filteredData.length === 0) {
-                alert('No data to download. Please adjust your filters.');
-                return;
-            }
-            
-            const dataWithAsterisk = filteredData.map(row => {
-                const newRow = {};
-                Object.keys(row).forEach(key => {
-                    if (CONFIG.AI_COLUMNS.includes(key)) {
-                        newRow[key + ' *'] = row[key];
-                    } else {
-                        newRow[key] = row[key];
-                    }
-                });
-                return newRow;
-            });
-            
-            const csv = Papa.unparse(dataWithAsterisk);
-            
-            const deptValue = document.getElementById('deptFilter').value;
-            const buValue = document.getElementById('buFilter').value;
-            const objCodeValue = document.getElementById('objCodeFilter').value;
-            const searchValue = document.getElementById('searchInput').value;
-            
-            let filename = 'general-fund-expenditures';
-            if (deptValue) filename += '-' + deptValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-            if (buValue) filename += '-' + buValue.substring(0, 40).replace(/[^a-z0-9]/gi, '-').toLowerCase();
-            if (objCodeValue) filename += '-' + objCodeValue.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-            if (searchValue) filename += '-search';
-            filename += '-' + new Date().toISOString().split('T')[0] + '.csv';
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }
-
-        // ======================
-        // Modal Functions
-        // ======================
-        function openModal() {
-            document.getElementById('aiModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('aiModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('aiModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-
-        // ======================
-        // Initialize
-        // ======================
-        window.addEventListener('DOMContentLoaded', loadData);
+        // ========================================
+        // Initialize App
+        // ========================================
+        window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
