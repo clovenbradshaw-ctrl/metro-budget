@@ -43,21 +43,20 @@
             letter-spacing: -0.5px;
         }
         .download-btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             background: rgba(255,255,255,0.2);
             color: white;
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .download-btn:hover {
             background: rgba(255,255,255,0.3);
         }
-        
-        /* Tab Navigation */
         .tabs {
             display: flex;
             gap: 4px;
@@ -85,20 +84,15 @@
             background: white;
             color: #667eea;
         }
-        
         .content {
             padding: 24px 32px;
         }
-        
-        /* View Containers */
         .view {
             display: none;
         }
         .view.active {
             display: block;
         }
-        
-        /* Dashboard Styles */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -153,8 +147,6 @@
             position: relative;
             height: 300px;
         }
-        
-        /* Toolbar Styles */
         .toolbar {
             background: white;
             border: 1px solid #e5e7eb;
@@ -317,8 +309,6 @@
             background: #dbeafe;
             border-color: #93c5fd;
         }
-        
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -336,11 +326,13 @@
         }
         .modal-content {
             background-color: white;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 0;
             border-radius: 12px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             animation: slideIn 0.3s;
         }
@@ -404,8 +396,6 @@
         .close-btn:hover {
             background: #5568d3;
         }
-        
-        /* Table Styles */
         .tabulator {
             border-radius: 10px;
             border: 1px solid #e5e7eb;
@@ -433,8 +423,6 @@
         .tabulator .tabulator-row:hover {
             background: #fafbfc;
         }
-        
-        /* Loading Styles */
         .loading {
             text-align: center;
             padding: 80px 20px;
@@ -460,7 +448,31 @@
             border-radius: 10px;
             border: 1px solid #fecaca;
         }
-        
+        .footer {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 32px;
+            margin-top: 48px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
         @media (max-width: 768px) {
             .chart-grid {
                 grid-template-columns: 1fr;
@@ -475,14 +487,24 @@
     <div class="container">
         <div class="header">
             <div class="header-top">
-                <h1>📊 General Fund Expenditures Dashboard</h1>
-                <button class="download-btn" onclick="App.downloadData()">↓ Download CSV</button>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <img src="https://storage.googleapis.com/intelechia-content/metro-budget-data/change%20log%20logo.png" alt="Change Log Nashville" style="height: 48px; width: auto;">
+                    <div>
+                        <h1>General Fund Expenditures Dashboard</h1>
+                        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Making Nashville's public spending actually public</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="download-btn" onclick="App.downloadRawCSV()">↓ Raw Data</button>
+                    <button class="download-btn" onclick="App.downloadData()">↓ Filtered View</button>
+                </div>
             </div>
             <div class="tabs">
-                <button class="tab active" onclick="App.switchView('dashboard')">📈 Dashboard</button>
-                <button class="tab" onclick="App.switchView('transactions')">📋 Transactions</button>
-                <button class="tab" onclick="App.switchView('invoices')">🧾 By Invoice</button>
-                <button class="tab" onclick="App.switchView('vendors')">🏢 By Vendor</button>
+                <button class="tab active" onclick="App.switchView('dashboard')">Dashboard</button>
+                <button class="tab" onclick="App.switchView('transactions')">Transactions</button>
+                <button class="tab" onclick="App.switchView('invoices')">By Invoice</button>
+                <button class="tab" onclick="App.switchView('vendors')">By Vendor</button>
+                <button class="tab" onclick="App.switchView('pivot')">By Department</button>
             </div>
         </div>
         
@@ -495,26 +517,32 @@
             
             <!-- Dashboard View -->
             <div id="dashboardView" class="view active">
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+                    <div style="font-size: 14px; color: #1e40af; line-height: 1.6;">
+                        <strong>July - August 2025</strong> • General Fund transactions provided by Metro Nashville via public records request. Department information decoded from accounting strings using AI-assisted analysis of Metro's FY26 budget structure.
+                    </div>
+                </div>
+                
                 <div class="dashboard-grid">
                     <div class="metric-card">
-                        <div class="metric-label">First Day</div>
+                        <div class="metric-label">Date Range</div>
                         <div class="metric-value" id="firstDay">-</div>
-                        <div class="metric-subtitle" id="firstDayCount">- transactions</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Last Day</div>
-                        <div class="metric-value" id="lastDay">-</div>
-                        <div class="metric-subtitle" id="lastDayCount">- transactions</div>
+                        <div class="metric-subtitle" id="dateRange">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Total Transactions</div>
                         <div class="metric-value" id="totalTransactions">0</div>
-                        <div class="metric-subtitle" id="dateRange">-</div>
+                        <div class="metric-subtitle" id="firstDayCount">Across all departments</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Total Amount</div>
                         <div class="metric-value" id="dashTotalAmount">$0</div>
                         <div class="metric-subtitle" id="avgTransaction">Avg: $0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Unique Vendors</div>
+                        <div class="metric-value" id="uniqueVendors">0</div>
+                        <div class="metric-subtitle" id="unconfirmedDepts">0 unconfirmed depts</div>
                     </div>
                 </div>
                 
@@ -535,7 +563,7 @@
             <div id="transactionsView" class="view">
                 <div class="toolbar">
                     <div class="search-bar">
-                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search transactions...">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search transactions...">
                         <div class="date-range-wrapper">
                             <input type="date" id="dateFrom" class="date-input" placeholder="From date">
                             <span style="color: #9ca3af;">→</span>
@@ -606,7 +634,7 @@
             <div id="invoicesView" class="view">
                 <div class="toolbar">
                     <div class="search-bar">
-                        <input type="text" id="invoiceSearchInput" class="search-input" placeholder="🔍 Search invoices...">
+                        <input type="text" id="invoiceSearchInput" class="search-input" placeholder="Search invoices...">
                     </div>
                     <div class="filters-section">
                         <div class="filter-group">
@@ -641,7 +669,7 @@
             <div id="vendorsView" class="view">
                 <div class="toolbar">
                     <div class="search-bar">
-                        <input type="text" id="vendorSearchInput" class="search-input" placeholder="🔍 Search vendors...">
+                        <input type="text" id="vendorSearchInput" class="search-input" placeholder="Search vendors...">
                     </div>
                     <div class="filters-section">
                         <div class="filter-group">
@@ -671,6 +699,66 @@
                 
                 <div id="vendorsTable"></div>
             </div>
+            
+            <!-- Pivot View -->
+            <div id="pivotView" class="view">
+                <div class="toolbar">
+                    <div class="filters-section">
+                        <div class="filter-group" style="flex: 1; max-width: 400px;">
+                            <label class="filter-label">Select Department</label>
+                            <select id="pivotDeptFilter" class="filter-select">
+                                <option value="">Select a department...</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Rows per page</label>
+                            <select id="pivotPageSize" class="filter-select">
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-bar" id="pivotStatsBar" style="display: none;">
+                    <div class="stat-item">
+                        <span class="stat-label">Selected Department</span>
+                        <span class="stat-value" id="selectedDepartment">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Object Categories</span>
+                        <span class="stat-value" id="totalObjectCodes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Transactions</span>
+                        <span class="stat-value" id="pivotTransactionCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Department Spending</span>
+                        <span class="stat-value" id="totalPivotAmount">$0</span>
+                    </div>
+                </div>
+                
+                <div id="pivotPlaceholder" style="padding: 80px 20px; text-align: center; color: #6b7280;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Select a Department</div>
+                    <div style="font-size: 14px;">Choose a department from the dropdown above to view spending by object code</div>
+                </div>
+                
+                <div id="pivotTable" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div><strong>Change Log Nashville</strong></div>
+            <div style="margin-top: 8px;">
+                Making Nashville's public spending data actually public • Data: July-August 2025
+            </div>
+            <div class="footer-links">
+                <a href="https://storage.googleapis.com/intelechia-content/metro-budget-data/general%20fund/General%20Fund%2010101%20July%20and%20August%202025%20Expenditures%20-%20PRR%2001936525(Data).csv" target="_blank">Original Data Source</a>
+                <a href="#" onclick="App.openModal(); return false;">How This Was Made</a>
+            </div>
         </div>
     </div>
 
@@ -679,19 +767,42 @@
         <div class="modal-content">
             <div class="modal-header">
                 <span style="font-size: 32px;">🤖</span>
-                <h2>AI-Analyzed Fields</h2>
+                <h2>How This Data Was Made Readable</h2>
             </div>
             <div class="modal-body">
-                <p>Columns marked with 🤖 are derived from GL Account Strings using AI-assisted mapping.</p>
-                <h3>AI-Derived Columns:</h3>
+                <h3>The Problem</h3>
+                <p>Metro Nashville provided transaction data without department names in readable format. When asked to include this basic information, they responded:</p>
+                
+                <blockquote style="background: #f9fafb; border-left: 4px solid #667eea; padding: 16px; margin: 16px 0; font-style: italic; color: #4b5563;">
+                    "In accordance with the Tennessee Public Records Act, our obligation is to provide access to existing records as they are maintained. The database does not maintain a separate field for the department name because the department number is imbedded in the accounting string. As you noted, the information in question is publicly accessible and can be obtained from existing sources to convert the department number to a name. We are not required to reformat or manipulate records beyond their original form."
+                </blockquote>
+
+                <h3>The Solution</h3>
+                <p>To make this data usable, AI tools (Claude and ChatGPT) were used to:</p>
                 <ul>
-                    <li><strong>Department</strong> - Mapped from Business Unit codes</li>
-                    <li><strong>Business Unit Description</strong> - Parsed from GL Account String</li>
-                    <li><strong>Object Code</strong> - Extracted from GL Account String</li>
-                    <li><strong>Object Description</strong> - Matched from FY26 budget</li>
+                    <li>Extract department codes from cryptic accounting strings (GL Account Strings)</li>
+                    <li>Parse Metro's 600+ page FY26 budget to identify ~500 business unit codes</li>
+                    <li>Match each transaction to its department and business unit description</li>
+                    <li>Link object codes to their descriptions from the budget structure</li>
                 </ul>
-                <h3>Accuracy Note:</h3>
-                <p>Always verify with original files for authoritative information.</p>
+
+                <h3>AI-Derived Columns</h3>
+                <p>Fields marked with 🤖 were reconstructed through this process:</p>
+                <ul>
+                    <li><strong>Department</strong> - Extracted from GL Account String business unit codes</li>
+                    <li><strong>Business Unit Description</strong> - Matched from budget document analysis</li>
+                    <li><strong>Object Code</strong> - Parsed from GL Account String segments</li>
+                    <li><strong>Object Description</strong> - Linked from FY26 budget object code definitions</li>
+                </ul>
+
+                <h3>Data Quality</h3>
+                <p>While this automated process is substantially accurate for analysis purposes, a small percentage of transactions could not be definitively matched to departments and are marked as "Unconfirmed." For critical decisions or detailed research, always verify with original Metro Finance records.</p>
+                
+                <p style="margin-top: 16px;"><strong>The original raw data is available via the "Raw Data" download button.</strong></p>
+                
+                <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 13px; color: #6b7280;">
+                    <strong>Notice an error?</strong> Email <a href="mailto:michaeltlacy@gmail.com" style="color: #667eea;">michaeltlacy@gmail.com</a>
+                </p>
             </div>
             <div class="modal-footer">
                 <button class="close-btn" onclick="App.closeModal()">Got it</button>
@@ -700,9 +811,6 @@
     </div>
 
     <script>
-        // ========================================
-        // Configuration & Constants
-        // ========================================
         const CONFIG = {
             CSV_URL: 'https://storage.googleapis.com/intelechia-content/metro-budget-data/general%20fund/General%20Fund%2010101%20July%20and%20August%202025%20Expenditures%20-%20PRR%2001936525(Data).csv',
             METRO_STRUCTURE_URL: 'https://raw.githubusercontent.com/clovenbradshaw-ctrl/metro-budget/refs/heads/main/metro-data-structure.json',
@@ -714,9 +822,6 @@
             AI_COLUMNS: ['Department', 'Business Unit Description', 'Object Code', 'Object Description']
         };
 
-        // ========================================
-        // Main Application
-        // ========================================
         const App = {
             state: {
                 rawData: [],
@@ -729,7 +834,8 @@
                 tables: {
                     transactions: null,
                     invoices: null,
-                    vendors: null
+                    vendors: null,
+                    pivot: null
                 },
                 charts: {
                     department: null,
@@ -737,9 +843,6 @@
                 }
             },
 
-            // ========================================
-            // Initialization
-            // ========================================
             async init() {
                 try {
                     await this.loadMetroStructure();
@@ -779,7 +882,6 @@
             },
 
             buildLookupTables() {
-                // Business Unit Lookup
                 this.state.metroStructure.departments.forEach(dept => {
                     dept.business_units.forEach(bu => {
                         this.state.businessUnitLookup[bu.code] = {
@@ -802,7 +904,6 @@
                     });
                 }
 
-                // Object Code Lookup
                 if (this.state.metroStructure.object_codes) {
                     this.state.metroStructure.object_codes.forEach(obj => {
                         this.state.objectCodeLookup[obj.code] = obj.description;
@@ -876,9 +977,6 @@
                 };
             },
 
-            // ========================================
-            // Dashboard
-            // ========================================
             initializeDashboard() {
                 const dates = this.state.processedData
                     .map(row => row['GL Date'] || row['Invoice Date'] || row['Payment Date'])
@@ -891,37 +989,36 @@
                 const firstDate = dates[0];
                 const lastDate = dates[dates.length - 1];
                 
-                const firstDayData = this.state.processedData.filter(row => {
-                    const rowDate = new Date(row['GL Date'] || row['Invoice Date'] || row['Payment Date']);
-                    return rowDate.toDateString() === firstDate.toDateString();
-                });
+                const uniqueVendors = new Set(
+                    this.state.processedData
+                        .map(row => row['Address Book Name'])
+                        .filter(name => name && name.trim())
+                ).size;
                 
-                const lastDayData = this.state.processedData.filter(row => {
-                    const rowDate = new Date(row['GL Date'] || row['Invoice Date'] || row['Payment Date']);
-                    return rowDate.toDateString() === lastDate.toDateString();
-                });
+                const unconfirmedCount = this.state.processedData.filter(row => 
+                    row['Department'] === 'Unconfirmed' || !row['Department']
+                ).length;
                 
                 const totalAmount = this.state.processedData.reduce((sum, row) => 
                     sum + (parseFloat(row['Total']) || 0), 0);
                 const avgTransaction = totalAmount / this.state.processedData.length;
                 
                 document.getElementById('firstDay').textContent = firstDate.toLocaleDateString();
-                document.getElementById('firstDayCount').textContent = `${firstDayData.length} transactions`;
-                document.getElementById('lastDay').textContent = lastDate.toLocaleDateString();
-                document.getElementById('lastDayCount').textContent = `${lastDayData.length} transactions`;
-                document.getElementById('totalTransactions').textContent = this.state.processedData.length.toLocaleString();
                 document.getElementById('dateRange').textContent = 
-                    `${firstDate.toLocaleDateString()} - ${lastDate.toLocaleDateString()}`;
+                    `to ${lastDate.toLocaleDateString()}`;
+                document.getElementById('totalTransactions').textContent = this.state.processedData.length.toLocaleString();
                 document.getElementById('dashTotalAmount').textContent = 
                     '$' + totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('avgTransaction').textContent = 
                     'Avg: $' + avgTransaction.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('uniqueVendors').textContent = uniqueVendors.toLocaleString();
+                document.getElementById('unconfirmedDepts').textContent = 
+                    `${unconfirmedCount.toLocaleString()} unconfirmed depts`;
                 
                 this.createCharts();
             },
 
             createCharts() {
-                // Department spending
                 const deptSpending = {};
                 this.state.processedData.forEach(row => {
                     const dept = row['Department'] || 'Unknown';
@@ -964,7 +1061,6 @@
                     }
                 });
                 
-                // Daily transactions
                 const dailyData = {};
                 this.state.processedData.forEach(row => {
                     const date = row['GL Date'] || row['Invoice Date'] || row['Payment Date'];
@@ -1004,13 +1100,11 @@
                 });
             },
 
-            // ========================================
-            // View Initialization
-            // ========================================
             initializeViews() {
                 this.initializeTransactionsView();
                 this.initializeInvoicesView();
                 this.initializeVendorsView();
+                this.initializePivotView();
             },
 
             initializeTransactionsView() {
@@ -1213,9 +1307,111 @@
                 });
             },
 
-            // ========================================
-            // Event Listeners & Filtering
-            // ========================================
+            initializePivotView() {
+                const departments = [...new Set(this.state.processedData.map(row => row['Department']))]
+                    .filter(x => x)
+                    .sort();
+                
+                const pivotDeptFilter = document.getElementById('pivotDeptFilter');
+                departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    pivotDeptFilter.appendChild(option);
+                });
+            },
+
+            buildPivotTableForDepartment(department) {
+                if (!department) {
+                    document.getElementById('pivotPlaceholder').style.display = 'block';
+                    document.getElementById('pivotTable').style.display = 'none';
+                    document.getElementById('pivotStatsBar').style.display = 'none';
+                    return;
+                }
+
+                const deptData = this.state.processedData.filter(row => 
+                    row['Department'] === department
+                );
+
+                const objectMap = {};
+                deptData.forEach(row => {
+                    const objectCode = row['Object Code'] || 'N/A';
+                    const objectDescription = row['Object Description'] || 'Unknown';
+                    
+                    if (!objectMap[objectCode]) {
+                        objectMap[objectCode] = {
+                            objectCode: objectCode,
+                            objectDescription: objectDescription,
+                            transactionCount: 0,
+                            totalAmount: 0
+                        };
+                    }
+                    
+                    objectMap[objectCode].transactionCount++;
+                    objectMap[objectCode].totalAmount += parseFloat(row['Total']) || 0;
+                });
+
+                const pivotData = Object.values(objectMap);
+
+                if (this.state.tables.pivot) {
+                    this.state.tables.pivot.destroy();
+                }
+
+                this.state.tables.pivot = new Tabulator("#pivotTable", {
+                    data: pivotData,
+                    columns: [
+                        {
+                            title: "Object Code", 
+                            field: "objectCode", 
+                            headerSort: true, 
+                            width: 120,
+                            frozen: true
+                        },
+                        {
+                            title: "Object Description", 
+                            field: "objectDescription", 
+                            headerSort: true
+                        },
+                        {
+                            title: "Transaction Count", 
+                            field: "transactionCount", 
+                            headerSort: true, 
+                            width: 150
+                        },
+                        {
+                            title: "Total Amount",
+                            field: "totalAmount",
+                            headerSort: true,
+                            width: 150,
+                            formatter: cell => '$' + parseFloat(cell.getValue()).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                        }
+                    ],
+                    layout: "fitDataStretch",
+                    pagination: true,
+                    paginationSize: 50,
+                    initialSort: [{column: "totalAmount", dir: "desc"}]
+                });
+
+                const totalAmount = pivotData.reduce((sum, row) => sum + row.totalAmount, 0);
+                const totalTransactions = pivotData.reduce((sum, row) => sum + row.transactionCount, 0);
+
+                document.getElementById('selectedDepartment').textContent = department;
+                document.getElementById('totalObjectCodes').textContent = pivotData.length.toLocaleString();
+                document.getElementById('pivotTransactionCount').textContent = totalTransactions.toLocaleString();
+                document.getElementById('totalPivotAmount').textContent = 
+                    '$' + totalAmount.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                document.getElementById('pivotPlaceholder').style.display = 'none';
+                document.getElementById('pivotTable').style.display = 'block';
+                document.getElementById('pivotStatsBar').style.display = 'flex';
+            },
+
             setupEventListeners() {
                 document.getElementById('searchInput').addEventListener('input', () => this.applyTransactionFilters());
                 document.getElementById('deptFilter').addEventListener('change', () => this.applyTransactionFilters());
@@ -1236,13 +1432,21 @@
                 document.getElementById('vendorPageSize').addEventListener('change', (e) => {
                     this.state.tables.vendors.setPageSize(parseInt(e.target.value));
                 });
+                
+                document.getElementById('pivotDeptFilter').addEventListener('change', (e) => {
+                    this.buildPivotTableForDepartment(e.target.value);
+                });
+                document.getElementById('pivotPageSize').addEventListener('change', (e) => {
+                    if (this.state.tables.pivot) {
+                        this.state.tables.pivot.setPageSize(parseInt(e.target.value));
+                    }
+                });
             },
 
             applyTransactionFilters() {
                 const filters = [];
                 let hasActiveFilters = false;
                 
-                // Search filter
                 const searchValue = document.getElementById('searchInput').value.trim();
                 if (searchValue) {
                     hasActiveFilters = true;
@@ -1255,28 +1459,24 @@
                     });
                 }
                 
-                // Department filter
                 const deptValue = document.getElementById('deptFilter').value;
                 if (deptValue) {
                     filters.push(data => data['Department'] === deptValue);
                     hasActiveFilters = true;
                 }
                 
-                // Business Unit filter
                 const buValue = document.getElementById('buFilter').value;
                 if (buValue) {
                     filters.push(data => data['Business Unit Description'] === buValue);
                     hasActiveFilters = true;
                 }
                 
-                // Object Code filter
                 const objCodeValue = document.getElementById('objCodeFilter').value;
                 if (objCodeValue) {
                     filters.push(data => data['Object Code'] === objCodeValue);
                     hasActiveFilters = true;
                 }
                 
-                // Date range filter
                 const dateFrom = document.getElementById('dateFrom').value;
                 const dateTo = document.getElementById('dateTo').value;
                 if (dateFrom || dateTo) {
@@ -1307,7 +1507,6 @@
                     });
                 }
                 
-                // Apply filters
                 if (filters.length > 0) {
                     this.state.tables.transactions.setFilter(data => {
                         return filters.every(filterFn => filterFn(data));
@@ -1316,7 +1515,6 @@
                     this.state.tables.transactions.clearFilter();
                 }
                 
-                // Show/hide filtered amount stat
                 const filteredAmountStat = document.getElementById('filteredAmountStat');
                 if (filteredAmountStat) {
                     filteredAmountStat.style.display = hasActiveFilters ? 'flex' : 'none';
@@ -1355,9 +1553,6 @@
                 }
             },
 
-            // ========================================
-            // Stats Updates
-            // ========================================
             updateTransactionStats() {
                 const totalRows = this.state.processedData.length;
                 
@@ -1407,9 +1602,6 @@
                     });
             },
 
-            // ========================================
-            // UI Actions
-            // ========================================
             switchView(viewName) {
                 this.state.currentView = viewName;
                 
@@ -1501,15 +1693,25 @@
                 
                 if (this.state.currentView === 'transactions') {
                     dataToExport = this.state.tables.transactions.getData("active");
-                    filename = 'transactions';
+                    filename = 'transactions-filtered';
                 } else if (this.state.currentView === 'invoices') {
                     dataToExport = this.state.tables.invoices.getData("active");
-                    filename = 'invoices';
+                    filename = 'invoices-filtered';
                 } else if (this.state.currentView === 'vendors') {
                     dataToExport = this.state.tables.vendors.getData("active");
-                    filename = 'vendors';
+                    filename = 'vendors-filtered';
+                } else if (this.state.currentView === 'pivot') {
+                    if (this.state.tables.pivot) {
+                        const selectedDept = document.getElementById('pivotDeptFilter').value;
+                        dataToExport = this.state.tables.pivot.getData("active");
+                        filename = `dept-${selectedDept.replace(/\s+/g, '-').toLowerCase()}-by-object`;
+                    } else {
+                        alert('Please select a department first.');
+                        return;
+                    }
                 } else {
                     dataToExport = this.state.processedData;
+                    filename = 'all-transactions-filtered';
                 }
                 
                 if (dataToExport.length === 0) {
@@ -1522,7 +1724,25 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+                a.download = `changelog-nash-${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            },
+
+            downloadRawCSV() {
+                if (this.state.rawData.length === 0) {
+                    alert('No raw data available.');
+                    return;
+                }
+                
+                const csv = Papa.unparse(this.state.rawData);
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `changelog-nash-raw-data-${new Date().toISOString().split('T')[0]}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1553,9 +1773,6 @@
             }
         };
 
-        // ========================================
-        // Initialize App
-        // ========================================
         window.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
